@@ -425,8 +425,6 @@ sudo pacman -S freetype2-infinality-ultimate fontconfig-infinality-ultimate \
                 <a data-url="https://yugnaynehc.github.io/en/2016/08/23/archlinux/" data-id="cle5um61000072ax2g5f1b6w4" class="article-share-link">Share</a>
 
 
-                <a href="/en/2016/08/23/archlinux/#disqus_thread" class="article-comment-link">Comments</a>
-
 
                 <ul class="article-tag-list" itemprop="keywords">
                   <li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/arch/" rel="tag">Arch</a></li>
@@ -462,21 +460,26 @@ sudo pacman -S freetype2-infinality-ultimate fontconfig-infinality-ultimate \
           <div class="comments">
 
 
-            <section id="comments">
-              
-      <script src="//cdn.bootcss.com/react/16.0.0/umd/react.production.min.js"></script>
-      <script src="//cdn.bootcss.com/react-dom/16.0.0/umd/react-dom.production.min.js"></script>
-      <script src="//cdn.bootcss.com/fetch/2.0.3/fetch.min.js"></script>
-      <script src="//cdn.jsdelivr.net/npm/blockies-identicon@0.1.0/blockies.min.js"></script>
-      <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
-      <div id="disqus_proxy_thread"><script src="/scripts/hexo-disqus-proxy-primary.js" async></script>
-                <noscript>
-                  Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
-                </noscript>
-                <div>
-            </section>
+
+            <div id="gitalk-container"></div>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+            <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+            <script>
+              var gitalk = new Gitalk({
+                clientID: "{{ theme.gitalk_shortname }}",
+                clientSecret: "{{ theme.gitalk_client_secret }}",
+                repo: "{{ theme.gitalk_repo_name }}",
+                owner: "{{ theme.gitalk_repo_owner }}",
+                admin: "{{ theme.gitalk_repo_admins }}",
+                id: "{{ page.path }}", // Ensure uniqueness and length less than 50
+                distractionFreeMode: false // Facebook-like distraction free mode
+              })
+              gitalk.render('gitalk-container')
+            </script>
 
           </div>
+
 
         </section>
 
@@ -525,23 +528,6 @@ sudo pacman -S freetype2-infinality-ultimate fontconfig-infinality-ultimate \
       }
     </script>
 
-
-    <script>
-      var disqus_shortname = 'yugnaynehc';
-
-      var disqus_url = 'https://yugnaynehc.github.io/2016/08/23/archlinux/';
-
-      (function() {
-        var dsq = document.createElement('script');
-        dsq.type = 'text/javascript';
-        dsq.async = true;
-        dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js'; <
-        !--用https加载， 防止disqus被墙-- >
-        <
-        !--如果加载的是count.js 会把article - comment - link的内容变成评论的数量-- >
-          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-      })();
-    </script>
 
 
 

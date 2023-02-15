@@ -4,7 +4,7 @@
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
 
-  <title>Archlinux安装笔记 | Meta</title>
+  <title>Archlinux安装笔记 | Meta</title><meta name="robots" content="noindex">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="初始准备 写入镜像到U盘中，可以使用Rufus  安装初始系统参考Arch Wiki  分区，使用fdisk或者gdisk，一般就只分一个大区，不再考虑boot，swap之类（似乎如果采用GPT分区表则必须分配一个boot分区，并且将引导信息写入该分区，参考Arch Wiki），因此得到&#x2F;dev&#x2F;sda1。之后格式化分区，使用4K块大小mkfs.ext4 -b 4096 &#x2F;dev&#x2F;sda1  如果">
   <meta property="og:type" content="article">
@@ -15,7 +15,7 @@
   <meta property="og:locale" content="zh_CN">
   <meta property="og:image" content="https://yugnaynehc.github.io/img/archlinux.png">
   <meta property="article:published_time" content="2016-08-23T09:42:43.000Z">
-  <meta property="article:modified_time" content="2023-02-15T15:25:22.819Z">
+  <meta property="article:modified_time" content="2023-02-15T17:10:18.155Z">
   <meta property="article:author" content="Yangyu Chen">
   <meta property="article:tag" content="Linux">
   <meta property="article:tag" content="Arch">
@@ -104,7 +104,7 @@
               </a>
 
               <div class="article-category">
-                <a class="article-category-link" href="/categories/note/">Note</a>
+
               </div>
 
 
@@ -341,7 +341,7 @@ X-GNOME-Autostart-Delay=20
                   <li>安装Emacs
                     <pre><code>sudo pacman -S emacs
 </code></pre>可以从我的仓库中拷贝一些配置
-                    <pre><code>git clone https://github.com/Yugnaynehc/Emacs.git ~ 
+                    <pre><code>git clone https://github.com/Yugnaynehc/Emacs.git ~
 </code></pre>之后使用package-install安装相应的扩展包<ul>
                       <li>elpy</li>
                       <li>paredit</li>
@@ -369,7 +369,7 @@ Server = http://bohoomil.com/repo/multilib/$arch
 Server = http://bohoomil.com/repo/fonts
 </code></pre>添加完成之后需要重新刷新缓存，然后就可以安装infinality的软件包了。安装时会提示与freetype2冲突，询问是否替换，选择是即可
                     <pre><code>sudo pacman -Syy
-sudo pacman -S freetype2-infinality-ultimate fontconfig-infinality-ultimate \ 
+sudo pacman -S freetype2-infinality-ultimate fontconfig-infinality-ultimate \
                cairo-infinality-ultimate jdk8-openjdk-infinality
 # sudo pacman -S infinality-bundle     # 也可以选择直接安装infinality-bundle软件包组
 </code></pre>安装完成之后，重启图形界面使得更改生效，不过貌似改进不大
@@ -388,7 +388,7 @@ sudo pacman -S freetype2-infinality-ultimate fontconfig-infinality-ultimate \
                 <p>这样就差不多了，附上成品图一张。
                   <img src="/img/archlinux.png" alt="配置好的桌面效果图" title="配置好的桌面效果图">
                 </p>
-
+                <!-- flag of hidden posts -->
                 <script>
                   window.disqusProxy = {
                     shortname: 'yugnaynehc',
@@ -410,8 +410,8 @@ sudo pacman -S freetype2-infinality-ultimate fontconfig-infinality-ultimate \
                     <li><span>文章标题: </span><a href="/2016/08/23/archlinux/">Archlinux安装笔记</a></li>
                     <li><span>文章作者: </span><a href="/" title="访问undefined的个人博客">undefined</a></li>
                     <li><span>发布时间: </span>八月 23日 2016, 5:42 下午</li>
-                    <li><span>最后更新: </span>二月 15日 2023, 11:25 晚上</li>
-                    <li><span>本文字数: </span><span class="page-count">本文一共有1,690字</span></li>
+                    <li><span>最后更新: </span>二月 16日 2023, 1:10 凌晨</li>
+                    <li><span>本文字数: </span><span class="page-count">本文一共有1,689字</span></li>
                     <li><span>原始链接: </span><a href="/2016/08/23/archlinux/" title="Archlinux安装笔记">https://yugnaynehc.github.io/2016/08/23/archlinux/</a></li>
                     <li><span>许可协议: </span><i class="fa fa-creative-commons"></i> <a rel="license noopener" target="_blank" href="https://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" title="Attribution-NonCommercial-NoDerivs 3.0 Unported (CC BY-NC-ND 3.0)">自由转载-非商用-非衍生-保持署名（创意共享3.0许可证）</a></li>
                   </ul>
@@ -426,33 +426,11 @@ sudo pacman -S freetype2-infinality-ultimate fontconfig-infinality-ultimate \
 
 
 
-                <ul class="article-tag-list" itemprop="keywords">
-                  <li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/arch/" rel="tag">Arch</a></li>
-                  <li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/" rel="tag">Linux</a></li>
-                </ul>
+                <ul class="article-tag-list" itemprop="keywords"></ul>
 
               </footer>
             </div>
 
-
-            <nav id="article-nav">
-
-              <a href="/2017/01/02/visual-information-theory/" id="article-nav-newer" class="article-nav-link-wrap">
-                <strong class="article-nav-caption">上一篇</strong>
-                <div class="article-nav-title">
-
-                  [译]直观理解信息论
-
-                </div>
-              </a>
-
-
-              <a href="/2016/04/23/a-model-of-saliency-based-visual-attention-for-rapid-scene-analysis/" id="article-nav-older" class="article-nav-link-wrap">
-                <strong class="article-nav-caption">下一篇</strong>
-                <div class="article-nav-title">论文笔记：A Model of Saliency-Based Visual Attention for Rapid Scene Analysis</div>
-              </a>
-
-            </nav>
 
 
           </article>

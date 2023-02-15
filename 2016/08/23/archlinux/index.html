@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+
+  <title>Archlinux安装笔记 | Meta</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="初始准备 写入镜像到U盘中，可以使用Rufus  安装初始系统参考Arch Wiki  分区，使用fdisk或者gdisk，一般就只分一个大区，不再考虑boot，swap之类（似乎如果采用GPT分区表则必须分配一个boot分区，并且将引导信息写入该分区，参考Arch Wiki），因此得到&#x2F;dev&#x2F;sda1。之后格式化分区，使用4K块大小mkfs.ext4 -b 4096 &#x2F;dev&#x2F;sda1  如果">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Archlinux安装笔记">
+  <meta property="og:url" content="https://yugnaynehc.github.io/2016/08/23/archlinux/index.html">
+  <meta property="og:site_name" content="Meta">
+  <meta property="og:description" content="初始准备 写入镜像到U盘中，可以使用Rufus  安装初始系统参考Arch Wiki  分区，使用fdisk或者gdisk，一般就只分一个大区，不再考虑boot，swap之类（似乎如果采用GPT分区表则必须分配一个boot分区，并且将引导信息写入该分区，参考Arch Wiki），因此得到&#x2F;dev&#x2F;sda1。之后格式化分区，使用4K块大小mkfs.ext4 -b 4096 &#x2F;dev&#x2F;sda1  如果">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/archlinux.png">
+  <meta property="article:published_time" content="2016-08-23T09:42:43.000Z">
+  <meta property="article:modified_time" content="2023-02-15T15:25:22.819Z">
+  <meta property="article:author" content="Yangyu Chen">
+  <meta property="article:tag" content="Linux">
+  <meta property="article:tag" content="Arch">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:image" content="https://yugnaynehc.github.io/img/archlinux.png">
+
+  <link rel="alternate" href="/atom.xml" title="Meta" type="application/atom+xml">
+
+
+  <link rel="icon" href="/favicon.ico">
+
+
+
+
+
+  <link rel="stylesheet" href="/css/style.css">
+
+
+  <!-- Google Analytics -->
+  <script type="text/javascript">
+    (function(i, s, o, g, r, a, m) {
+      i['GoogleAnalyticsObject'] = r;
+      i[r] = i[r] || function() {
+        (i[r].q = i[r].q || []).push(arguments)
+      }, i[r].l = 1 * new Date();
+      a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0];
+      a.async = 1;
+      a.src = g;
+      m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-49263256-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+  <!-- End Google Analytics -->
+
+
+  <meta name="generator" content="Hexo 6.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      <header id="header">
+        <div id="banner"></div>
+        <div id="header-outer" class="outer">
+
+          <div id="header-inner" class="inner">
+            <nav id="sub-nav">
+
+              <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+
+              <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+            </nav>
+            <div id="search-form-wrap">
+              <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://yugnaynehc.github.io"></form>
+            </div>
+            <nav id="main-nav">
+              <a id="main-nav-toggle" class="nav-icon"></a>
+
+              <a class="main-nav-link" href="/">主页</a>
+
+              <a class="main-nav-link" href="/archives/">归档</a>
+
+              <a class="main-nav-link" href="/about/">关于</a>
+
+            </nav>
+
+          </div>
+          <div id="header-title" class="inner">
+            <h1 id="logo-wrap">
+              <a href="/" id="logo">Meta</a>
+            </h1>
+
+          </div>
+        </div>
+      </header>
+      <div class="outer">
+        <section id="main">
+          <article id="post-archlinux" class="article article-type-post" itemscope itemprop="blogPost">
+            <div class="article-meta">
+
+              <a href="/2016/08/23/archlinux/" class="article-date">
+                <time datetime="2016-08-23T09:42:43.000Z" itemprop="datePublished">2016-08-23</time>
+              </a>
+
+              <div class="article-category">
+                <a class="article-category-link" href="/categories/note/">Note</a>
+              </div>
+
+
+            </div>
+            <div class="article-inner">
+
+
+              <header class="article-header">
+
+
+                <h1 class="article-title" itemprop="name">
+                  Archlinux安装笔记
+                </h1>
+
+
+              </header>
+
+              <div class="article-entry" itemprop="articleBody">
+
+                <!-- Table of Contents -->
+
+                <h1 id="初始准备"><a href="#初始准备" class="headerlink" title="初始准备"></a>初始准备</h1>
+                <ol start="0">
+                  <li>写入镜像到U盘中，可以使用<a target="_blank" rel="noopener" href="https://rufus.akeo.ie/?locale=zh_CN/">Rufus</a></li>
+                </ol>
+                <h1 id="安装初始系统"><a href="#安装初始系统" class="headerlink" title="安装初始系统"></a>安装初始系统</h1>
+                <p>参考<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/Installation_guide_">Arch Wiki</a></p>
+                <ol>
+                  <li>分区，使用fdisk或者gdisk，一般就只分一个大区，不再考虑boot，swap之类（似乎如果采用GPT分区表则必须分配一个boot分区，并且将引导信息写入该分区，<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/GRUB">参考Arch Wiki</a>），因此得到/dev/sda1。之后格式化分区，使用4K块大小
+                    <pre><code>mkfs.ext4 -b 4096 /dev/sda1
+</code></pre> 如果需要swap分区，可以在装好系统之后添加一个swap文件，之后细说。<span id="more"></span>
+                  </li>
+                  <li>挂载分区
+                    <pre><code>mount -t ext4 -o discard,noatime /dev/sda1 /mnt
+</code></pre>
+                  </li>
+                  <li>编辑镜像源
+                    <pre><code>vim /etc/pacman.d/mirrorlist
+</code></pre>
+                  </li>
+                  <li>安装基本系统
+                    <pre><code>pacstrap /mnt base base-devel vim
+</code></pre> base是基础软件包组，base-devel是基础开发包组
+                  </li>
+                  <li>生成 fstab
+                    <pre><code>genfstab -U -p /mnt &gt;&gt; /mnt/etc/fstab
+</code></pre>
+                  </li>
+                  <li>Change root 到新安装的系统
+                    <pre><code>arch-chroot /mnt /bin/bash
+</code></pre>
+                  </li>
+                  <li>编辑locale信息，首先修改/etc/locale.gen，把需要的locale配置反注释，然后执行
+                    <pre><code>locale-gen
+</code></pre> 生成locale，之后设置系统当前使用的locale
+                    <pre><code>echo export LANG=en_US.UTF-8 &gt; /etc/locale.conf
+</code></pre> 这里使用en_US是为了避免在tty下中文显示的乱码问题，之后使用图形界面时，可以在~/.xprofile中添加
+                    <pre><code>export LANG=zh_CN.UTF-8
+</code></pre> 使得图形界面下正确显示中文
+                  </li>
+                  <li>设置主机名
+                    <pre><code>echo myhostname &gt; /etc/hostname
+</code></pre>
+                  </li>
+                  <li>创建一个初始 RAM disk
+                    <pre><code>mkinitcpio -p linux
+</code></pre>
+                  </li>
+                  <li>先安装 os-prober，以便grub能够检测到已经装过的系统（如Windows），然后安装grub
+                    <pre><code>pacman -S os-prober grub
+</code></pre>
+                  </li>
+                  <li>配置引导
+                    <pre><code>grub-mkconfig -o /boot/grub/grub.cfg
+grub-install --target=i386-pc /dev/sda
+</code></pre>
+                  </li>
+                  <li>需要的话可以配置一下网络，安装network-manager，并设置自启动
+                    <pre><code>pacman -S network-manager-applet
+systemctl enable NetworkManager.service
+</code></pre>
+                  </li>
+                  <li>安装zsh
+                    <pre><code>pacman -S zsh
+</code></pre>
+                  </li>
+                  <li>添加一个用户，指定使用zsh
+                    <pre><code>useradd -m -g users -G wheel -s /bin/zsh archie
+</code></pre>为了使wheel用户组能够使用sudo命令，使用visudo命令，或者
+                    <pre><code>vim /etc/sudoers
+</code></pre>找到
+                    <pre><code>#%wheel ALL=(ALL) ALL
+</code></pre>反注释之
+                  </li>
+                  <li>退出chroot环境，卸载挂载的分区
+                    <pre><code>umount -R /mnt
+</code></pre>之后重启，如果能够看到grub的引导界面并且能够进入arch，就大功告成了。以后就不再使用root登录，而使用之前添加的用户。
+                  </li>
+                </ol>
+                <h1 id="安装图形界面"><a href="#安装图形界面" class="headerlink" title="安装图形界面"></a>安装图形界面</h1>
+                <ol start="16">
+                  <li>先装X Server
+                    <pre><code>sudo pacman -S xorg
+</code></pre>
+                  </li>
+                  <li>装yaourt，先在/etc/pacman.conf里加入
+                    <pre><code>[archlinuxcn]
+SigLevel = Optional TrustedOnly
+Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
+</code></pre>可以顺手把里面的Color那行反注释，开启pacman的彩色模式
+                  </li>
+                  <li>不折腾了，直接用gnome
+                    <pre><code>sudo pacman -S gnome
+</code></pre>安装完毕后配置gdm自启动，并且立即启用gdm
+                    <pre><code>sudo systemctl enable gdm
+sudo systemctl start gdm
+</code></pre>
+                  </li>
+                  <li>安装numix主题
+                    <pre><code>sudo pacman -S numix-themes numix-circle-icon-theme-git
+</code></pre>
+                  </li>
+                  <li>安装一些中文字体
+                    <pre><code>pacman -S wqy-microhei ttf-dejavu ttf-droid cantarell-fonts \
+          adobe-source-han-sans-cn-fonts
+</code></pre>
+                  </li>
+                  <li>安装界面管理工具gnome-tweak-tool
+                    <pre><code>sudo pacman -S gnome-tweak-tool
+</code></pre>然后使用这个工具来配置图形界面的主题和字体
+                  </li>
+                  <li>安装中文输入法
+                    <pre><code>sudo pacman -S fcitx-im fcitx-sunpinyin fcitx-cloudpinyin fcitx-configtool
+</code></pre>在~/.xprofile中加入如下语句确保输入法被正确开启
+                    <pre><code>export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=&quot;@im=fcitx&quot;
+</code></pre>
+                  </li>
+                </ol>
+                <h1 id="安装常用软件"><a href="#安装常用软件" class="headerlink" title="安装常用软件"></a>安装常用软件</h1>
+                <p>接下来就是个性化配置了，包括配置zsh，安装各种软件。</p>
+                <ol start="23">
+                  <li>安装wget和git
+                    <pre><code>sudo pacman -S wget git
+</code></pre>
+                  </li>
+                  <li>使用oh-my-zsh来配置zsh
+                    <pre><code>wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh \
+     -O - | sh
+</code></pre>
+                  </li>
+                  <li>在zsh中使用powerlevel9k主题，首先要安装一些字体
+                    <pre><code>git clone https://github.com/powerline/fonts.git
+cd fonts
+./install.sh
+</code></pre>之后安装powerlevel9k主题
+                    <pre><code>git clone https://github.com/bhilburn/powerlevel9k.git \
+          ~/.oh-my-zsh/custom/themes/powerlevel9k
+</code></pre>然后编辑~/.zshrc，启用该主题
+                    <pre><code>ZSH_THEME=&quot;powerlevel9k/powerlevel9k&quot;
+</code></pre>还可以在.zshrc中继续配置powerlevel9k主题
+                    <pre><code>POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(time context dir)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(vcs status rbenv)
+POWERLEVEL9K_STATUS_VERBOSE=false
+POWERLEVEL9K_SHORTEN_STRATEGY=&quot;truncate_middle&quot;
+POWERLEVEL9K_SHORTEN_DIR_LENGTH=3
+POWERLEVEL9K_PROMPT_ON_NEWLINE=true
+</code></pre>
+                  </li>
+                  <li>为了能够访问google，配置shadowsocks，<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/Shadowsocks_">参考Arch Wiki</a>
+                    <pre><code>sudo pacman -S shadowsocks
+</code></pre>之后编辑/etc/shadowsocks/config.json，加入自己的配置信息
+                    <pre><code>&#123;
+    &quot;server&quot;:&quot;remote-shadowsocks-server-ip-addr&quot;,
+    &quot;server_port&quot;:443,
+    &quot;local_address&quot;:&quot;127.0.0.1&quot;,
+    &quot;local_port&quot;:1080,
+    &quot;password&quot;:&quot;your-passwd&quot;,
+    &quot;timeout&quot;:300,
+    &quot;method&quot;:&quot;aes-256-cfb&quot;,
+    &quot;fast_open&quot;:false,
+    &quot;workers&quot;:1
+&#125;
+</code></pre>接下来让shadowsocks开机自启动，并且立即在后台运行shadowsocks
+                    <pre><code>sudo systemctl enable shadowsocks@config
+sudo systemctl start shadowsocks@config
+</code></pre>
+                  </li>
+                  <li>安装Chrome
+                    <pre><code>yaourt -S google-chrome
+</code></pre>配置<a target="_blank" rel="noopener" href="https://github.com/FelisCatus/SwitchyOmega/releases">Proxy SwitchyOmega插件</a>，所需的自动切换规则列表可以使用<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt">GFWList</a>
+                  </li>
+                  <li>使用Chrome比较占内存，因此可能需要添加swap空间，参考<a target="_blank" rel="noopener" href="https://kelvinh.github.io/blog/2013/10/27/add-swap-on-archlinux/">这里</a>
+                    <pre><code>sudo dd if=/dev/zero of=/swapfile bs=1M count=512
+sudo chown root:root /swapfile
+sudo chmod 0600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+</code></pre>为了让开机的时候自动挂载swap空间，更新/etc/fstab
+                    <pre><code>echo /swapfile none swap defaults 0 0 | sudo tee -a /etc/fstab
+</code></pre>另外，如果使用文泉驿等中文字体，会造成Chrome的卡顿，建议使用系统自带的中文字体，或者使用note-fonts-cjk，参见<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/Chromium_">Arch Wiki</a>
+                  </li>
+                  <li>需要自动更新壁纸，可以使用variery
+                    <pre><code>sudo pacman -S variety
+</code></pre>
+                  </li>
+                  <li>需要自动修改屏幕色温，可以使用redshift
+                    <pre><code>sudo pacman -S redshift
+</code></pre>编辑~/.config/autostart/redshift.desktop，让它开机自启动
+                    <pre><code>[Desktop Entry]
+Name=Redshift
+Exec=redshift -l 40.32:116.62
+Terminal=false
+Type=Application
+X-GNOME-Autostart-Delay=20
+</code></pre>
+                  </li>
+                  <li>需要监控系统运行状态，安装conky
+                    <pre><code>sudo pacman -S conky
+</code></pre>编辑~/.conkyrc可以改变conky的外观，配置信息可以参考<a target="_blank" rel="noopener" href="http://www.jianshu.com/p/0bec3fcdaf8d">这里</a>， 编辑~/.config/autostart/conky.desktop，让它开机自启动
+                    <pre><code>[Desktop Entry]
+Name=Conky
+Exec=conky
+Terminal=false
+Type=Application
+X-GNOME-Autostart-Delay=20
+</code></pre>
+                  </li>
+                  <li>安装anaconda
+                    <pre><code>sudo pacman -S anaconda
+</code></pre>记得配置PATH，编辑/etc/profile，在PATH中加入/opt/anaconda/bin
+                  </li>
+                  <li>安装Emacs
+                    <pre><code>sudo pacman -S emacs
+</code></pre>可以从我的仓库中拷贝一些配置
+                    <pre><code>git clone https://github.com/Yugnaynehc/Emacs.git ~ 
+</code></pre>之后使用package-install安装相应的扩展包<ul>
+                      <li>elpy</li>
+                      <li>paredit</li>
+                      <li>clojure-mode</li>
+                      <li>auto-complete</li>
+                      <li>color-theme</li>
+                      <li>auctex</li>
+                      <li>session</li>
+                      <li>web-mode</li>
+                    </ul>
+                  </li>
+                  <li>安装解压软件file-roller
+                    <pre><code>sudo pacman -S file-roller
+</code></pre>
+                  </li>
+                  <li>需要的话可以安装微软雅黑字体，参考<a target="_blank" rel="noopener" href="http://kimith.blogspot.com/2012/04/arch.html">这里</a>，可能还要使用字体渲染包infinality，参考<a target="_blank" rel="noopener" href="http://www.jianshu.com/p/fe2165cc6af8">这里</a>
+                    <pre><code>sudo pacman-key -r 962DDE58   # 信任infinality的密钥
+sudo pacman-key --lsign-key 962DDE58
+</code></pre>在etc/pacman.conf中添加infinality的软件源
+                    <pre><code>[infinality-bundle]
+Server = http://bohoomil.com/repo/$arch
+[infinality-bundle-multilib]
+Server = http://bohoomil.com/repo/multilib/$arch
+[infinality-bundle-fonts]
+Server = http://bohoomil.com/repo/fonts
+</code></pre>添加完成之后需要重新刷新缓存，然后就可以安装infinality的软件包了。安装时会提示与freetype2冲突，询问是否替换，选择是即可
+                    <pre><code>sudo pacman -Syy
+sudo pacman -S freetype2-infinality-ultimate fontconfig-infinality-ultimate \ 
+               cairo-infinality-ultimate jdk8-openjdk-infinality
+# sudo pacman -S infinality-bundle     # 也可以选择直接安装infinality-bundle软件包组
+</code></pre>安装完成之后，重启图形界面使得更改生效，不过貌似改进不大
+                  </li>
+                  <li>安装screenfetch来在终端中显示系统信息
+                    <pre><code>sudo pacman -S screenfetch
+</code></pre>
+                  </li>
+                  <li>安装LaTeX相关的软件
+                    <pre><code>sudo pacman -S texlive-most texlive-lang
+</code></pre>也可以用text-langcjk简化替代texlive-lang。之后还需要安装poppler-data使得evince能够正确显示中文文档
+                    <pre><code>yaourt -S poppler-data   # 用来正确显示中文文档
+</code></pre>
+                  </li>
+                </ol>
+                <p>这样就差不多了，附上成品图一张。
+                  <img src="/img/archlinux.png" alt="配置好的桌面效果图" title="配置好的桌面效果图">
+                </p>
+
+                <script>
+                  window.disqusProxy = {
+                    shortname: 'yugnaynehc',
+                    username: 'Yugnaynehc',
+                    server: '172.247.32.111',
+                    port: 5509,
+                    adminAvatar: '/avatars/admin-avatar.jpg',
+                    identifier: '2016/08/23/archlinux/',
+                  };
+                  window.disqus_config = function() {
+                    this.page.url = window.location.href;
+                    this.page.identifier = window.disqusProxy.identifier;
+                  };
+                </script>
+
+                <span class="post_counter" id="busuanzi_container_page_pv">本文总阅读量: <span id="busuanzi_value_page_pv"></span>次</span>
+                <div class="declaration">
+                  <ul>
+                    <li><span>文章标题: </span><a href="/2016/08/23/archlinux/">Archlinux安装笔记</a></li>
+                    <li><span>文章作者: </span><a href="/" title="访问undefined的个人博客">undefined</a></li>
+                    <li><span>发布时间: </span>八月 23日 2016, 5:42 下午</li>
+                    <li><span>最后更新: </span>二月 15日 2023, 11:25 晚上</li>
+                    <li><span>本文字数: </span><span class="page-count">本文一共有1,690字</span></li>
+                    <li><span>原始链接: </span><a href="/2016/08/23/archlinux/" title="Archlinux安装笔记">https://yugnaynehc.github.io/2016/08/23/archlinux/</a></li>
+                    <li><span>许可协议: </span><i class="fa fa-creative-commons"></i> <a rel="license noopener" target="_blank" href="https://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" title="Attribution-NonCommercial-NoDerivs 3.0 Unported (CC BY-NC-ND 3.0)">自由转载-非商用-非衍生-保持署名（创意共享3.0许可证）</a></li>
+                  </ul>
+                  <p><span>转载请保留以上信息。</span></p>
+                </div>
+
+
+
+              </div>
+              <footer class="article-footer">
+                <a data-url="https://yugnaynehc.github.io/2016/08/23/archlinux/" data-id="cle5um61000072ax2g5f1b6w4" class="article-share-link">分享</a>
+
+
+                <a href="/2016/08/23/archlinux/#disqus_thread" class="article-comment-link">留言</a>
+
+
+                <ul class="article-tag-list" itemprop="keywords">
+                  <li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/arch/" rel="tag">Arch</a></li>
+                  <li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/" rel="tag">Linux</a></li>
+                </ul>
+
+              </footer>
+            </div>
+
+
+            <nav id="article-nav">
+
+              <a href="/2017/01/02/visual-information-theory/" id="article-nav-newer" class="article-nav-link-wrap">
+                <strong class="article-nav-caption">上一篇</strong>
+                <div class="article-nav-title">
+
+                  [译]直观理解信息论
+
+                </div>
+              </a>
+
+
+              <a href="/2016/04/23/a-model-of-saliency-based-visual-attention-for-rapid-scene-analysis/" id="article-nav-older" class="article-nav-link-wrap">
+                <strong class="article-nav-caption">下一篇</strong>
+                <div class="article-nav-title">论文笔记：A Model of Saliency-Based Visual Attention for Rapid Scene Analysis</div>
+              </a>
+
+            </nav>
+
+
+          </article>
+
+          <div class="comments">
+
+
+            <section id="comments">
+              
+      <script src="//cdn.bootcss.com/react/16.0.0/umd/react.production.min.js"></script>
+      <script src="//cdn.bootcss.com/react-dom/16.0.0/umd/react-dom.production.min.js"></script>
+      <script src="//cdn.bootcss.com/fetch/2.0.3/fetch.min.js"></script>
+      <script src="//cdn.jsdelivr.net/npm/blockies-identicon@0.1.0/blockies.min.js"></script>
+      <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+      <div id="disqus_proxy_thread"><script src="/scripts/hexo-disqus-proxy-primary.js" async></script>
+                <noscript>
+                  Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+                </noscript>
+                <div>
+            </section>
+
+          </div>
+
+        </section>
+
+      </div>
+      <footer id="footer">
+
+        <div class="outer">
+          <div id="footer-left">
+            &copy; 2014 - 2023 Yangyu Chen&nbsp;|&nbsp;
+            主题 <a href="https://github.com/giscafer/hexo-theme-cafe/" target="_blank">Cafe</a>
+          </div>
+          <div id="footer-right">
+            <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <span id="busuanzi_container_site_pv">本站总浏览量<span id="busuanzi_value_site_pv"></span>次</span>
+            <span id="busuanzi_container_site_uv">访客量<span id="busuanzi_value_site_uv"></span>人次</span>
+            <div class="clearfix"></div>
+            <div id="footer-right">
+              联系方式&nbsp;|&nbsp;yugnaynehc@gmail.com
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      <script src="/jquery/jquery.min.js"></script>
+
+
+    </div>
+    <nav id="mobile-nav">
+
+      <a href="/" class="mobile-nav-link">主页</a>
+
+      <a href="/archives/" class="mobile-nav-link">归档</a>
+
+      <a href="/about/" class="mobile-nav-link">关于</a>
+
+    </nav>
+    <img class="back-to-top-btn" src="/images/fly-to-top.png" />
+    <script>
+      // Elevator script included on the page, already.
+      window.onload = function() {
+        var elevator = new Elevator({
+          selector: '.back-to-top-btn',
+          element: document.querySelector('.back-to-top-btn'),
+          duration: 1000 // milliseconds
+        });
+      }
+    </script>
+
+
+    <script>
+      var disqus_shortname = 'yugnaynehc';
+
+      var disqus_url = 'https://yugnaynehc.github.io/2016/08/23/archlinux/';
+
+      (function() {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js'; <
+        !--用https加载， 防止disqus被墙-- >
+        <
+        !--如果加载的是count.js 会把article - comment - link的内容变成评论的数量-- >
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+
+
+
+    <script src="/js/is.js"></script>
+
+
+
+
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+    <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+    <script src="/js/script.js"></script>
+
+
+    <script src="/js/elevator.js"></script>
+
+  </div><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({{ JSON.stringify(config) }});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="{{ src }}">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+</body>
+
+</html>

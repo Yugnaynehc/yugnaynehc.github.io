@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+
+  <title>[译]理解 LSTM 网络 | Meta</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="作者：Christopher Olah &amp;nbsp; 翻译：Yangyu Chen 原文：Understanding LSTM Networks   循环神经网络人类在思考问题的时候并不总是从头开始的。当你在读这篇短文时，你对当前读到的每个字的理解，是建立在对之前内容理解的基础上的。你并不是把所有的东西扔掉然后从头开始思考。换句话说，你的思考具有延续性。 传统的神经网络无法模拟人的这一行为，这似">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="[译]理解 LSTM 网络">
+  <meta property="og:url" content="https://yugnaynehc.github.io/en/2017/01/03/understanding-lstm-networks/index.html">
+  <meta property="og:site_name" content="Meta">
+  <meta property="og:description" content="作者：Christopher Olah &amp;nbsp; 翻译：Yangyu Chen 原文：Understanding LSTM Networks   循环神经网络人类在思考问题的时候并不总是从头开始的。当你在读这篇短文时，你对当前读到的每个字的理解，是建立在对之前内容理解的基础上的。你并不是把所有的东西扔掉然后从头开始思考。换句话说，你的思考具有延续性。 传统的神经网络无法模拟人的这一行为，这似">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/RNN-rolled.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/RNN-unrolled.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/RNN-shorttermdepdencies.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/RNN-longtermdependencies.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM3-SimpleRNN.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM3-chain.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM2-notation.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM3-C-line.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM3-gate.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM3-focus-f.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM3-focus-i.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM3-focus-C.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM3-focus-o.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM3-var-peepholes.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM3-var-GRU.png">
+  <meta property="article:published_time" content="2017-01-03T07:07:13.000Z">
+  <meta property="article:modified_time" content="2023-02-15T15:25:22.819Z">
+  <meta property="article:author" content="Yangyu Chen">
+  <meta property="article:tag" content="Computer Science">
+  <meta property="article:tag" content="Machine Learning">
+  <meta property="article:tag" content="Translation">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/RNN-rolled.png">
+
+  <link rel="alternate" href="/atom.xml" title="Meta" type="application/atom+xml">
+
+
+  <link rel="icon" href="/favicon.ico">
+
+
+
+
+
+  <link rel="stylesheet" href="/css/style.css">
+
+
+  <!-- Google Analytics -->
+  <script type="text/javascript">
+    (function(i, s, o, g, r, a, m) {
+      i['GoogleAnalyticsObject'] = r;
+      i[r] = i[r] || function() {
+        (i[r].q = i[r].q || []).push(arguments)
+      }, i[r].l = 1 * new Date();
+      a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0];
+      a.async = 1;
+      a.src = g;
+      m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-49263256-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+  <!-- End Google Analytics -->
+
+
+  <meta name="generator" content="Hexo 6.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      <header id="header">
+        <div id="banner"></div>
+        <div id="header-outer" class="outer">
+
+          <div id="header-inner" class="inner">
+            <nav id="sub-nav">
+
+              <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+
+              <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+            </nav>
+            <div id="search-form-wrap">
+              <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://yugnaynehc.github.io"></form>
+            </div>
+            <nav id="main-nav">
+              <a id="main-nav-toggle" class="nav-icon"></a>
+
+              <a class="main-nav-link" href="/en/">Home</a>
+
+              <a class="main-nav-link" href="/en/archives/">Archive</a>
+
+              <a class="main-nav-link" href="/en/about/">About</a>
+
+            </nav>
+
+          </div>
+          <div id="header-title" class="inner">
+            <h1 id="logo-wrap">
+              <a href="/en/" id="logo">Meta</a>
+            </h1>
+
+          </div>
+        </div>
+      </header>
+      <div class="outer">
+        <section id="main">
+          <article id="post-understanding-lstm-networks" class="article article-type-post" itemscope itemprop="blogPost">
+            <div class="article-meta">
+
+              <a href="/en/2017/01/03/understanding-lstm-networks/" class="article-date">
+                <time datetime="2017-01-03T07:07:13.000Z" itemprop="datePublished">2017-01-03</time>
+              </a>
+
+              <div class="article-category">
+                <a class="article-category-link" href="/categories/article/">Article</a>
+              </div>
+
+
+            </div>
+            <div class="article-inner">
+
+
+              <header class="article-header">
+
+
+                <h1 class="article-title" itemprop="name">
+                  [译]理解 LSTM 网络
+                </h1>
+
+
+              </header>
+
+              <div class="article-entry" itemprop="articleBody">
+
+                <!-- Table of Contents -->
+
+                <div style="text-align:right;margin-top:1em;">
+                  <text>作者：<em>Christopher Olah</em> &nbsp; 翻译：<em>Yangyu Chen</em></text><br>
+                  <text>原文：<a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank">Understanding LSTM Networks</a></text>
+                </div>
+
+                <h1 id="循环神经网络"><a href="#循环神经网络" class="headerlink" title="循环神经网络"></a>循环神经网络</h1>
+                <p>人类在思考问题的时候并不总是从头开始的。当你在读这篇短文时，你对当前读到的每个字的理解，是建立在对之前内容理解的基础上的。你并不是把所有的东西扔掉然后从头开始思考。换句话说，你的思考具有延续性。</p>
+                <p>传统的神经网络无法模拟人的这一行为，这似乎是一个巨大的缺陷。例如，假设你想要对电影中发生的每一个事件进行分类，我们不知道如何让传统的神经网络去利用先前的推断结果作出下一个推断。</p>
+                <p><strong>循环神经网络(Recurrent neural networks，RNN)</strong>解决了这个问题。它们是具有循环结构的网络，这使得它们能够保存信息。
+                  <span id="more"></span>
+                </p>
+                <p><img src="/img/understanding-lstm-networks/RNN-rolled.png" height=260px alt=循环神经网络具有循环结构。></p>
+                <p>在上面这幅图中，一个神经网络<span>$A$</span><!-- Has MathJax -->，以<span>$x_{t}$</span><!-- Has MathJax -->为输入，然后输出<span>$h_{t}$</span><!-- Has MathJax -->。循环结构使得信息能够一步一步地在网络中传递。</p>
+                <p>这些循环使得 RNN 看起来有点难以理解。然而，如果仔细思考一下，就会发现它和通常的神经网络没有什么不同。一个循环神经网络可以被看成是同一个网络经过多次复制得到，每一个部分都往下一个部分传递消息。考虑一下当我们把循环展开之后会发生什么：</p>
+                <p><img src="/img/understanding-lstm-networks/RNN-unrolled.png" alt="一个展开的循环神经网络。"></p>
+                <p>这种链式的结构自然地揭示了循环神经网络与序列和列表紧密相关。这是处理序列数据的神经网络的天然结构。</p>
+                <p>而且它们毫无疑问是有用的！在过去的几年中，在许多问题上使用 RNN 都取得了令人难以置信的成功，比如：语音识别，语言建模，翻译，图像描述…这个清单还在增长。想要知道我们能够用 RNN 做出什么样的惊艳工作，可以参考Andrej Karpathy 所写的精彩博文<a target="_blank" rel="noopener" href="http://karpathy.github.io/2015/05/21/rnn-effectiveness/">The Unreasonable Effectiveness of Recurrent Neural Networks</a>。不得不说这真是太令人惊讶了。</p>
+                <p>这些成功的关键是使用了“LSTM”，一种非常特殊的循环神经网络，它在许多任务上都比标准的 RNN 更有效。几乎所有基于 RNN 取得的良好结果都用到了 LSTM。 LSTM 就是我们这篇文章的主角。</p>
+                <h1 id="长期依赖的问题"><a href="#长期依赖的问题" class="headerlink" title="长期依赖的问题"></a>长期依赖的问题</h1>
+                <p>RNN 设计理念的一个吸引人之处是，它能够把当前的任务和先前的信息连接起来，比如利用前一段时间的视频帧来理解当前帧的内容。如果 RNN 真的能够做到这个，那将会是非常有效的。但确实能做到吗？这得看情况。</p>
+                <p>有时候，我们只需要知道近期的信息就能处理当前的任务。比如，考虑一个基于前几个单词来预测后一个单词的语言模型。如果我们想预测句子“the clouds are in the <em>sky</em>”的最后一个单词，我们不需要更多的信息——很显然最后一个单词就是“sky”。在这种情况下，被预测信息和其相关信息之间的间隔是很小的，RNN 可以学会如何使用过去的信息。</p>
+                <p><img src="/img/understanding-lstm-networks/RNN-shorttermdepdencies.png" alt=""></p>
+                <p>但是有时候我们也会需要更多的上下文信息。考虑预测句子“I grew up in France… I speak fluent <em>French</em>”的最后一个单词。短期的信息提示我们最后一个单词很可能是一种语言的名字，但是如果我们想确定是哪种语言，我们需要再往回走一点，找到“France”这个线索。被预测信息和其相关信息之间的间隔非常大是完全有可能的。</p>
+                <p>非常不幸，随着信息间隔的扩大，RNN变得越来越难以学会如何去连接相关的信息。</p>
+                <p><img src="/img/understanding-lstm-networks/RNN-longtermdependencies.png" alt=""></p>
+                <p>理论上，RNN 完全具有处理这种“长期依赖”的能力。人们可以精心挑选参数来解决上述形式的简单问题。可惜，在实践中，RNN 似乎无法学会远距离的信息连接<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>。<a target="_blank" rel="noopener" href="http://people.idsia.ch/~juergen/SeppHochreiter1991ThesisAdvisorSchmidhuber.pdf">Hochreiter (1991)[German]</a>和<a target="_blank" rel="noopener" href="http://www-dsi.ing.unifi.it/~paolo/ps/tnn-94-gradient.pdf">Bengio等人(1994)</a>深入地研究了这个问题，并且指出了问题难以被解决的原因。</p>
+                <p>幸运的是，LSTM 能解决这个问题！</p>
+                <h1 id="LSTM-网络"><a href="#LSTM-网络" class="headerlink" title="LSTM 网络"></a>LSTM 网络</h1>
+                <p><strong>长短期记忆网络(Long Short Term Memory networks)</strong>——常被简称为“LSTM”——是一种特殊的 RNN，能够用来学习长期依赖。它由<a target="_blank" rel="noopener" href="http://deeplearning.cs.cmu.edu/pdfs/Hochreiter97_lstm.pdf">Hochreiter和Schmidhuber(1997)</a>提出，并在之后的工作中被优化和推广开来<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup>。它在许多问题上有着非常好的效果，并且现在已经被广泛使用了。</p>
+                <p>LSTM 是为了解决长期依赖的问题而设计的。长时间地记住一段信息是它的默认的行为，而不是需要努力去学习才能做到。</p>
+                <p>所有的循环神经网络都能够用一串重复的神经网络模块来表示。对于普通的神经网络，被重复的模块具有简单的结构，比如单层的 tanh 层。</p>
+                <p><img src="/img/understanding-lstm-networks/LSTM3-SimpleRNN.png" alt="RNN 的循环模块具有一个层。"></p>
+                <p>LSTM 同样也有着这种链式结构，但是其中的模块具有不同的构造。不同于只有一个神经网络层，LSTM 的模块中有四个网络层，并且通过一种特别的方式进行数据传输。</p>
+                <p><img src="/img/understanding-lstm-networks/LSTM3-chain.png" alt="LSTM 的循环模块具有四个交互层。"></p>
+                <p>不用担心其中的细节。我们接下来会一步步地讨论 LSTM 的每一个步骤。现在，让我们先熟悉一下将要用到的标记符号。</p>
+                <p>在上面这幅图中，每一条线都表示一整个向量，并且从流出的节点被送到流入的节点。粉红色的圆圈表示对向量进行逐元素的运算，比如向量加法。黄色的方框是学出来的神经网络层。汇聚的线条表示数据的串联，而分叉的线条表示数据被拷贝然后分发到不同的位置。</p>
+                <p><img src="/img/understanding-lstm-networks/LSTM2-notation.png" alt=""></p>
+                <h1 id="LSTM的核心思想"><a href="#LSTM的核心思想" class="headerlink" title="LSTM的核心思想"></a>LSTM的核心思想</h1>
+                <p>LSTM 的关键是细胞(cell)状态，由横穿示意图上部的水平直线所表示。</p>
+                <p>细胞状态的更迭有点儿像传送带的运行，它随着整个模块链延伸下去，偶尔进行一些小型的线性交互。可以很容易地让信息利用细胞状态行传递而不发生改变。</p>
+                <p><img src="/img/understanding-lstm-networks/LSTM3-C-line.png" alt=""></p>
+                <p>在一种叫做门(gate)的结构的精心控制下，LSTM 具有往细胞状态中添加或者移除信息的能力。</p>
+                <p>门是一种控制信息传递的通道。它由一个 sigmoid 神经网络层和逐元素乘法运算构成。</p>
+                <p><img src="/img/understanding-lstm-networks/LSTM3-gate.png" alt=""></p>
+                <p>sigmoid 层的输出在0到1之间，用来描述每一个部分被传递的情况。0意味着“禁止通行”，而1意味着“完全放行！”</p>
+                <p>在一个 LSTM 模块中三个这样的门，用来保护和控制细胞状态。</p>
+                <h1 id="LSTM-的运行步骤"><a href="#LSTM-的运行步骤" class="headerlink" title="LSTM 的运行步骤"></a>LSTM 的运行步骤</h1>
+                <p>LSTM 的第一步是决定需要从之前的细胞状态中剔除多少信息。这个决定由一个被称为“遗忘门层”的 sigmoid 层作出<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>。它考虑<span>$h_{t-1}$</span><!-- Has MathJax -->和<span>$x_{t}$</span><!-- Has MathJax -->，然后为细胞状态<span>$C_{t-1}$</span><!-- Has MathJax -->的每一位输出相应的0到1之间的数字。输出1表示“完全保持这部分信息”，而输出0表示“剔除这部分的信息”。</p>
+                <p>让我们回到语言模型的例子，通过输入的上一个单词来预测下一个单词。在这个问题中，细胞状态需要保持当前主语的性别信息，这样就能确定该用哪个代词。当我们看见一个新的主语时，就要把旧主语的性别信息遗忘掉。</p>
+                <p><img src="/img/understanding-lstm-networks/LSTM3-focus-f.png" alt=""></p>
+                <p>下一步是确定哪些新信息需要被存储到细胞状态中。这由两部分组成。首先，一个被称为“输入门层”的 sigmoid 层决定哪些信息需要被更新。然后，一个tanh层产生一个新的候选值向量<span>$\tilde{C_{t}}$</span><!-- Has MathJax -->，它能够被加入到细胞状态中。接下来，我们把上面两部分的结果合并，然后去更新细胞状态。</p>
+                <p>在我们的语言模型例子中，我们想要把新主语的性别信息加入到细胞状态中，去取代要被遗忘掉的旧主语的性别信息。</p>
+                <p><img src="/img/understanding-lstm-networks/LSTM3-focus-i.png" alt=""></p>
+                <p>是时候把旧的细胞状态<span>$\tilde{C_{t-1}}$</span><!-- Has MathJax -->更新到新状态<span>$\tilde{C_{t}}$</span><!-- Has MathJax -->了。上面的步骤已经确定了该做什么，我们要做的就是去执行它。</p>
+                <p>我们让旧的细胞状态与<span>$f_{t}$</span><!-- Has MathJax -->逐元素相乘，以此把之前决定要遗忘的东西遗忘掉。然后再加上<span>$i_{t}*\tilde{C_{t}}$</span><!-- Has MathJax -->，即根据每一个状态分量的通过系数进行调整后的候选向量。<sup id="fnref:4"><a href="#fn:4" rel="footnote">4</a></sup></p>
+                <p>在语言模型的例子中，上述的过程就是把旧的性别信息换成新的性别信息的过程。</p>
+                <p><img src="/img/understanding-lstm-networks/LSTM3-focus-C.png" alt=""></p>
+                <p>最后，我们需要确定将会输出什么内容。输出将会根据细胞状态，但是会进行一些过滤。首先，我们使用一个 sigmoid 层来决定哪部分的细胞状态将要被输出。然后，我们把细胞状态送入tanh(把数值范围变到-1到1之间)函数。最后把上面两部分的输出逐点相乘，这样我们就能只输出想输出的内容<sup id="fnref:5"><a href="#fn:5" rel="footnote">5</a></sup>。</p>
+                <p>对于语言模型的例子，由于模型刚刚看见了一个主语，它可能会输出与动词有关的信息，以便在需要的时候产生正确的动词。例如，它可能会输出主语是单数还是复数，所以如果接下来要产生一个动词，那么就知道该选择什么样的词形。</p>
+                <p><img src="/img/understanding-lstm-networks/LSTM3-focus-o.png" alt=""></p>
+                <h1 id="长短期记忆的变种"><a href="#长短期记忆的变种" class="headerlink" title="长短期记忆的变种"></a>长短期记忆的变种</h1>
+                <p>上面我所描述的是最通常的 LSTM。并不是所有 LSTM 的结构都是如此。实际上，好像几乎所有的论文里所用的 LSTM 都会做一些小改动。不同之处一般是很细微的，但是有一些改动还是值得一说的。</p>
+                <p><a href="ftp://ftp.idsia.ch/pub/juergen/TimeCount-IJCNN2000.pdf">Gers和Schmidhuber(2000)</a>提出了一种常用的 LSTM 变种，它加入了<strong>“窥视孔连接”(peephole connections)</strong>，这使得各个门的神经网络层能够看见细胞状态<sup id="fnref:6"><a href="#fn:6" rel="footnote">6</a></sup>。</p>
+                <p><img src="/img/understanding-lstm-networks/LSTM3-var-peepholes.png" alt=""></p>
+                <p>上图中为所有的门加入了窥视孔，但是在许多论文中只会为部分的门增加窥视孔。</p>
+                <p>另外一个变种是把遗忘门和输入门合并。不同于分别决定哪些部分要被遗忘，哪些部分需要加入新信息，我们现在同时作出决定。我们只遗忘那些需要被更新的部分，(或者说)我们只更新那些被遗忘掉的部分。</p>
+                <p><a target="_blank" rel="noopener" href="http://arxiv.org/pdf/1406.1078v3.pdf">Cho等人(2014)</a>提出了一种改动较大的 LSTM 是门循环单元(Gated Recurrent Unit)，也被简称为 GRU。它把遗忘门和输入门 合并成一个“更新门”(updategate)。它还把细胞状态和隐层状态合并，然后有一些其它改动。最终的模型比标准的 LSTM 简单，并且变得越来越流行。</p>
+                <p><img src="/img/understanding-lstm-networks/LSTM3-var-GRU.png" alt=""></p>
+                <p>上面提到的只是一些 LSTM 的著名变种。除此之外还有一些，比如 <a target="_blank" rel="noopener" href="http://arxiv.org/pdf/1508.03790v2.pdf">Yao等人(2015)</a> 提出的带有深度门的 RNN(Depth Gated RNNs)。还存在着一些处理长期依赖的不同方法，比如<a target="_blank" rel="noopener" href="http://arxiv.org/pdf/1402.3511v1.pdf">Koutnik等人(2014)</a> 提出的发条 RNN(Clockwork RNNs)。</p>
+                <p>哪一种变种是最好的呢？这些改动有什么用处吗？<a target="_blank" rel="noopener" href="http://arxiv.org/pdf/1503.04069.pdf">Gref等人(2015)</a> 对流行的变种做了一个很好的比较，发现它们其实是一样的<sup id="fnref:7"><a href="#fn:7" rel="footnote">7</a></sup>。<a target="_blank" rel="noopener" href="http://jmlr.org/proceedings/papers/v37/jozefowicz15.pdf">Jozefowicz等人(2015)</a>对超过一万种 RNN 结构进行测试，发现有一些结构在某个任务下会比 LSTM 效果好些。</p>
+                <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1>
+                <p>之前我曾提过人们使用 RNN 作出的惊艳结果。实际上他们所用的几乎都是 LSTM。LSTM 确实在大部分任务上都比原始的 RNN 更有效。</p>
+                <p>用一大堆公式来定义的 LSTM 看起来挺唬人的。希望本文中对它的一步步介绍能够让 LSTM 显得平易近人一些。</p>
+                <p>LSTM 的提出是使用 RNN 的一大进步。很自然地，我们会想：还可以再进一步吗？研究界的共识是：“当然！下一个突破口就是注意力(attention)机制！”核心思想就是让 RNN 的每一步都从一个大的信息集合中挑选一部分信息。比如，如果要用 RNN 来对一张图片产生一句话的描述，可以让它在生成每一个单词的时候都只关注图片的某一部分。实际上，<a target="_blank" rel="noopener" href="http://arxiv.org/pdf/1502.03044v2.pdf">Xu等人(2015)</a>就是这么做的——如果你想研究注意力机制，这可能是一个有趣的起点！还有许多已有的工作是从注意力的角度考虑的，而且似乎有更多的工作与注意力机制有关…</p>
+                <p>注意力机制并不是 RNN 研究的唯一分支。例如，<a target="_blank" rel="noopener" href="http://arxiv.org/pdf/1507.01526v1.pdf">Kalchbrenner等人(2015)</a> 提出的网格 LSTM(Grid LSTMs)也是一个很有前途的工作。把 RNN 用于产生式模型<sup id="fnref:8"><a href="#fn:8" rel="footnote">8</a></sup>——例如<a target="_blank" rel="noopener" href="http://arxiv.org/pdf/1502.04623.pdf">Gregor等人(2015)</a>，<a target="_blank" rel="noopener" href="http://arxiv.org/pdf/1506.02216v3.pdf">Chung等人(2015)</a>，和<a target="_blank" rel="noopener" href="http://arxiv.org/pdf/1411.7610v3.pdf">Bayer与Osendorfer(2015)</a> 的工作看起来都很有趣。过去的几年是循环神经网络发展的黄金时期，而接下来的几年很有可能更是如此！</p>
+                <h1 id="致谢"><a href="#致谢" class="headerlink" title="致谢"></a>致谢</h1>
+                <p>我要感谢许多帮助我更好地理解 LSTM，对可视化结果进行评论，以及对这篇文章作出反馈的人。</p>
+                <p>非常感谢我在Google的同事的有益反馈，特别要感谢<a target="_blank" rel="noopener" href="http://research.google.com/pubs/OriolVinyals.html">Oriol Vinyals</a>，<a target="_blank" rel="noopener" href="http://research.google.com/pubs/GregCorrado.html">Greg Corrado</a>，<a target="_blank" rel="noopener" href="http://research.google.com/pubs/JonathonShlens.html">Jon Shlens</a>，<a target="_blank" rel="noopener" href="http://people.cs.umass.edu/~luke/">Luke Vilnis</a> 和 <a target="_blank" rel="noopener" href="http://www.cs.toronto.edu/~ilya/">Ilya Sutskever</a>。我还要感谢许多花费时间帮助我的朋友和同事，包括<a target="_blank" rel="noopener" href="https://www.linkedin.com/pub/dario-amodei/4/493/393">Dario Amodei</a>和<a target="_blank" rel="noopener" href="http://cs.stanford.edu/~jsteinhardt/">Jacob Steinhardt</a>。特别要感谢<a target="_blank" rel="noopener" href="http://www.kyunghyuncho.me/">Kyunghyun Cho</a>为我的示意图和我进行的细致讨论。</p>
+                <p>在写这篇文章之前，我曾在两个研讨课程中讲解神经网络，并且尝试解释 LSTM。感谢每一位课程参与者对我的耐心和反馈。</p>
+                <div id="footnotes">
+                  <hr>
+                  <div id="footnotelist">
+                    <ol style="list-style:none; padding-left: 0;">
+                      <li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">1.</span><span style="display: inline-block; vertical-align: top;">原文为：Sadly, in practice, RNNs don’t seem to be able to learn them.</span><a href="#fnref:1" rev="footnote"> ↩</a></li>
+                      <li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">2.</span><span style="display: inline-block; vertical-align: top;">除了原文作者，许多人为 LSTM 的发展作出了贡献。一个不完整的名单包括：Felix Gers, Fred Cummins, Santiago Fernandez, Justin Bayer, Daan Wierstra, Julian Togelius, Faustian Gomez, Matteo Gagliolo, 和 Alex Graves。</span><a href="#fnref:2" rev="footnote"> ↩</a></li>
+                      <li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">3.</span><span style="display: inline-block; vertical-align: top;">译者注：sigmoid 层的工作机制可以分成两部分，首先是对输入做一个仿射变换(<span>$z=Wx+b$</span><!-- Has MathJax -->)，然后把变换的结果传入 sigmoid 函数中(<span>$o=sigmoid(z)$</span><!-- Has MathJax -->)，得到输出结果。</span><a href="#fnref:3" rev="footnote"> ↩</a></li>
+                      <li id="fn:4"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">4.</span><span style="display: inline-block; vertical-align: top;">译者注：<span>$*$</span><!-- Has MathJax -->表示逐元素相乘。</span><a href="#fnref:4" rev="footnote"> ↩</a></li>
+                      <li id="fn:5"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">5.</span><span style="display: inline-block; vertical-align: top;">译者注：其实细胞状态的输入和输出机制是很像的，都是用一个 sigmoid 门来控制要输出的部分，同时用 tanh 把原有的信息进行数值压缩。使用 tanh 的好处是它的导数是<span>$1-(\tanh(x))^{2}$</span><!-- Has MathJax -->，范围在[0,1]。而使用 sigmoid 使得输出范围为[0,1]，正好可以用来表示数据通过的程度。</span><a href="#fnref:5" rev="footnote"> ↩</a></li>
+                      <li id="fn:6"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">6.</span><span style="display: inline-block; vertical-align: top;">译者注：即把细胞状态也作为各个门的神经网络层的输入的一部分。</span><a href="#fnref:6" rev="footnote"> ↩</a></li>
+                      <li id="fn:7"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">7.</span><span style="display: inline-block; vertical-align: top;">原文为：finding that they’re all about the same</span><a href="#fnref:7" rev="footnote"> ↩</a></li>
+                      <li id="fn:8"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">8.</span><span style="display: inline-block; vertical-align: top;">原文为：Work using RNNs in generative models</span><a href="#fnref:8" rev="footnote"> ↩</a></li>
+                    </ol>
+                  </div>
+                </div>
+                <script>
+                  window.disqusProxy = {
+                    shortname: 'yugnaynehc',
+                    username: 'Yugnaynehc',
+                    server: '172.247.32.111',
+                    port: 5509,
+                    adminAvatar: '/avatars/admin-avatar.jpg',
+                    identifier: 'en/2017/01/03/understanding-lstm-networks/',
+                  };
+                  window.disqus_config = function() {
+                    this.page.url = window.location.href;
+                    this.page.identifier = window.disqusProxy.identifier;
+                  };
+                </script>
+
+                <span class="post_counter" id="busuanzi_container_page_pv">View: <span id="busuanzi_value_page_pv"></span> times</span>
+                <div class="declaration">
+                  <ul>
+                    <li><span>Title: </span><a href="/en/2017/01/03/understanding-lstm-networks/">[译]理解 LSTM 网络</a></li>
+                    <li><span>Author: </span><a href="/" title="Visit undefined&#39;s blog">undefined</a></li>
+                    <li><span>Post: </span>January 3rd 2017, 3:07 pm</li>
+                    <li><span>Update: </span>February 15th 2023, 11:25 pm</li>
+                    <li><span>Count: </span><span class="page-count">This article has 3,867 words</span></li>
+                    <li><span>Link: </span><a href="/en/2017/01/03/understanding-lstm-networks/" title="[译]理解 LSTM 网络">https://yugnaynehc.github.io/2017/01/03/understanding-lstm-networks/</a></li>
+                    <li><span>License: </span><i class="fa fa-creative-commons"></i> <a rel="license noopener" target="_blank" href="https://creativecommons.org/licenses/by-nc-nd/3.0/deed" title="Attribution-NonCommercial-NoDerivs 3.0 Unported (CC BY-NC-ND 3.0)">Attribution-NonCommercial-NoDerivs 3.0 Unported</a></li>
+                  </ul>
+                  <p><span>Please keep the above statements when repost this article.</span></p>
+                </div>
+
+
+
+              </div>
+              <footer class="article-footer">
+                <a data-url="https://yugnaynehc.github.io/en/2017/01/03/understanding-lstm-networks/" data-id="cle5um614000c2ax24ib3fb3l" class="article-share-link">Share</a>
+
+
+                <a href="/en/2017/01/03/understanding-lstm-networks/#disqus_thread" class="article-comment-link">Comments</a>
+
+
+                <ul class="article-tag-list" itemprop="keywords">
+                  <li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/computer-science/" rel="tag">Computer Science</a></li>
+                  <li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/machine-learning/" rel="tag">Machine Learning</a></li>
+                  <li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/translation/" rel="tag">Translation</a></li>
+                </ul>
+
+              </footer>
+            </div>
+
+
+            <nav id="article-nav">
+
+
+              <a href="/en/2017/01/02/visual-information-theory/" id="article-nav-older" class="article-nav-link-wrap">
+                <strong class="article-nav-caption">Older</strong>
+                <div class="article-nav-title">[译]直观理解信息论</div>
+              </a>
+
+            </nav>
+
+
+          </article>
+
+          <div class="comments">
+
+
+            <section id="comments">
+              
+      <script src="//cdn.bootcss.com/react/16.0.0/umd/react.production.min.js"></script>
+      <script src="//cdn.bootcss.com/react-dom/16.0.0/umd/react-dom.production.min.js"></script>
+      <script src="//cdn.bootcss.com/fetch/2.0.3/fetch.min.js"></script>
+      <script src="//cdn.jsdelivr.net/npm/blockies-identicon@0.1.0/blockies.min.js"></script>
+      <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+      <div id="disqus_proxy_thread"><script src="/scripts/hexo-disqus-proxy-primary.js" async></script>
+                <noscript>
+                  Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+                </noscript>
+                <div>
+            </section>
+
+          </div>
+
+        </section>
+
+      </div>
+      <footer id="footer">
+
+        <div class="outer">
+          <div id="footer-left">
+            &copy; 2014 - 2023 Yangyu Chen&nbsp;|&nbsp;
+            Theme by <a href="https://github.com/giscafer/hexo-theme-cafe/" target="_blank">Cafe</a>
+          </div>
+          <div id="footer-right">
+            <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <span id="busuanzi_container_site_pv">This site was visited <span id="busuanzi_value_site_pv"></span> times</span>
+            <span id="busuanzi_container_site_uv">by <span id="busuanzi_value_site_uv"></span> visitor</span>
+            <div class="clearfix"></div>
+            <div id="footer-right">
+              Contact&nbsp;|&nbsp;yugnaynehc@gmail.com
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      <script src="/jquery/jquery.min.js"></script>
+
+
+    </div>
+    <nav id="mobile-nav">
+
+      <a href="/en/" class="mobile-nav-link">Home</a>
+
+      <a href="/en/archives/" class="mobile-nav-link">Archive</a>
+
+      <a href="/en/about/" class="mobile-nav-link">About</a>
+
+    </nav>
+    <img class="back-to-top-btn" src="/images/fly-to-top.png" />
+    <script>
+      // Elevator script included on the page, already.
+      window.onload = function() {
+        var elevator = new Elevator({
+          selector: '.back-to-top-btn',
+          element: document.querySelector('.back-to-top-btn'),
+          duration: 1000 // milliseconds
+        });
+      }
+    </script>
+
+
+    <script>
+      var disqus_shortname = 'yugnaynehc';
+
+      var disqus_url = 'https://yugnaynehc.github.io/2017/01/03/understanding-lstm-networks/';
+
+      (function() {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js'; <
+        !--用https加载， 防止disqus被墙-- >
+        <
+        !--如果加载的是count.js 会把article - comment - link的内容变成评论的数量-- >
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+
+
+
+    <script src="/js/is.js"></script>
+
+
+
+
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+    <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+    <script src="/js/script.js"></script>
+
+
+    <script src="/js/elevator.js"></script>
+
+  </div><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({{ JSON.stringify(config) }});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="{{ src }}">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+</body>
+
+</html>

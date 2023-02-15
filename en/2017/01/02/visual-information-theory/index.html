@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+
+  <title>[译]直观理解信息论 | Meta</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="作者：Christopher Olah &amp;nbsp; 翻译：Yangyu Chen 原文：Visual Information Theory   我喜欢通过不同方式思考事物所带来的感觉，特别是当某些模糊的想法被形式化为具体的概念时。信息论便是一个极好的例子。 信息论为我们提供了精确的语言来描述许多事物。我对事物有多少的不确信？知道问题A的答案能够为问题B提供多少信息？两组观点之间有多么相似1？当">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="[译]直观理解信息论">
+  <meta property="og:url" content="https://yugnaynehc.github.io/en/2017/01/02/visual-information-theory/index.html">
+  <meta property="og:site_name" content="Meta">
+  <meta property="og:description" content="作者：Christopher Olah &amp;nbsp; 翻译：Yangyu Chen 原文：Visual Information Theory   我喜欢通过不同方式思考事物所带来的感觉，特别是当某些模糊的想法被形式化为具体的概念时。信息论便是一个极好的例子。 信息论为我们提供了精确的语言来描述许多事物。我对事物有多少的不确信？知道问题A的答案能够为问题B提供多少信息？两组观点之间有多么相似1？当">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/prob-1D-rain.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/prob-1D-coat.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/prob-2D-independent-rain.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/prob-2D-dependant-rain-squish.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/prob-2D-factored-rain-arrow.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/prob-2D-factored1-clothing-B.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/simpson-margin.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/simpson-participants.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/simpson-separated-note.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/message.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/code-2bit.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/encode-2bit.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/DogWordFreq.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/OldCode.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/code.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/NewCode.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/EntropyOptimalLengthExample.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/CodeSpace.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/encode.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/CodeSpaceUsed.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/code-costonly.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/code-lengthcontrib.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/code-cost.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/code-cost-longshort.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/code-auction-balanced-noderivs.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/code-derivs.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/code-auction-balanced.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/code-auction-eps.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/entropy-def-notitle.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/DogCatWordFreq.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/CrossEntropyDef.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/CrossEntropyCompare.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/CrossEntropyPQ.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/CrossEntropyQP.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/prob-2D-factored1-detail.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/prob-2D-factored1-flat.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/Hxy-flat.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/Hxy-3D.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/HxCy-sep.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/HxCy.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/Hxy-info-1.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/Hxy-overview.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/Hxy-info-4.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/Hxy-overview-sum.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/Hxy-info.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/halfbit-ab.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/halfbit-ab2.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/halfbit-ab-idealcode.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/halfbit-ab-code.png">
+  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/mutual-visual-eq.png">
+  <meta property="article:published_time" content="2017-01-02T07:20:22.000Z">
+  <meta property="article:modified_time" content="2023-02-15T15:25:22.819Z">
+  <meta property="article:author" content="Yangyu Chen">
+  <meta property="article:tag" content="Computer Science">
+  <meta property="article:tag" content="Machine Learning">
+  <meta property="article:tag" content="Translation">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:image" content="https://yugnaynehc.github.io/img/visual-information-theory/prob-1D-rain.png">
+
+  <link rel="alternate" href="/atom.xml" title="Meta" type="application/atom+xml">
+
+
+  <link rel="icon" href="/favicon.ico">
+
+
+
+
+
+  <link rel="stylesheet" href="/css/style.css">
+
+
+  <!-- Google Analytics -->
+  <script type="text/javascript">
+    (function(i, s, o, g, r, a, m) {
+      i['GoogleAnalyticsObject'] = r;
+      i[r] = i[r] || function() {
+        (i[r].q = i[r].q || []).push(arguments)
+      }, i[r].l = 1 * new Date();
+      a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0];
+      a.async = 1;
+      a.src = g;
+      m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-49263256-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+  <!-- End Google Analytics -->
+
+
+  <meta name="generator" content="Hexo 6.2.0"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+    <div id="wrap">
+      <header id="header">
+        <div id="banner"></div>
+        <div id="header-outer" class="outer">
+
+          <div id="header-inner" class="inner">
+            <nav id="sub-nav">
+
+              <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+
+              <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+            </nav>
+            <div id="search-form-wrap">
+              <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://yugnaynehc.github.io"></form>
+            </div>
+            <nav id="main-nav">
+              <a id="main-nav-toggle" class="nav-icon"></a>
+
+              <a class="main-nav-link" href="/en/">Home</a>
+
+              <a class="main-nav-link" href="/en/archives/">Archive</a>
+
+              <a class="main-nav-link" href="/en/about/">About</a>
+
+            </nav>
+
+          </div>
+          <div id="header-title" class="inner">
+            <h1 id="logo-wrap">
+              <a href="/en/" id="logo">Meta</a>
+            </h1>
+
+          </div>
+        </div>
+      </header>
+      <div class="outer">
+        <section id="main">
+          <article id="post-visual-information-theory" class="article article-type-post" itemscope itemprop="blogPost">
+            <div class="article-meta">
+
+              <a href="/en/2017/01/02/visual-information-theory/" class="article-date">
+                <time datetime="2017-01-02T07:20:22.000Z" itemprop="datePublished">2017-01-02</time>
+              </a>
+
+              <div class="article-category">
+                <a class="article-category-link" href="/categories/article/">Article</a>
+              </div>
+
+
+            </div>
+            <div class="article-inner">
+
+
+              <header class="article-header">
+
+
+                <h1 class="article-title" itemprop="name">
+                  [译]直观理解信息论
+                </h1>
+
+
+              </header>
+
+              <div class="article-entry" itemprop="articleBody">
+
+                <!-- Table of Contents -->
+
+                <div style="text-align:right;margin-top:1em;">
+                  <text>作者：<em>Christopher Olah</em> &nbsp; 翻译：<em>Yangyu Chen</em></text><br>
+                  <text>原文：<a href="https://colah.github.io/posts/2015-09-Visual-Information/" target="_blank">Visual Information Theory</a></text>
+                </div>
+
+                <p>我喜欢通过不同方式思考事物所带来的感觉，特别是当某些模糊的想法被形式化为具体的概念时。信息论便是一个极好的例子。</p>
+                <p>信息论为我们提供了精确的语言来描述许多事物。我对事物有多少的不确信？知道问题A的答案能够为问题B提供多少信息？两组观点之间有多么相似<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>？当我还是孩子时便对这些念头有了简单的思索，但是信息论把这些念头变成了精确而又有效的概念<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup>。这些概念有着非常多样的应用，从数据压缩，到量子物理，再到机器学习，以及它们之间的交叉领域。</p>
+                <p>不幸的是，信息论看起来似乎有点让人畏惧。我并不认为有什么理由使得它必须如此。事实上，许多核心概念可以完全通过图形来解释！
+                  <span id="more"></span>
+                </p>
+                <h1 id="概率分布的可视化"><a href="#概率分布的可视化" class="headerlink" title="概率分布的可视化"></a>概率分布的可视化</h1>
+                <p>在我们进入信息论的世界之前，让我们想一想如何将简单的概率分布可视化。接下来我们会需要它，并且这并不是一件难事。此外，这些把概率可视化的技巧本身也是非常有用的！</p>
+                <p>我住在加州。那儿有时会下雨，但是大部分时间是艳阳高照的！让我们假设有75%的日子是晴天。很容易得到这样一张图：</p>
+                <p><img src="/img/visual-information-theory/prob-1D-rain.png" alt=""></p>
+                <p>大部分日子里，我穿着T恤，但有些时候我也穿外套。假设我有38%的时间穿着外套。同样很容易得到这样一张图：</p>
+                <p><img src="/img/visual-information-theory/prob-1D-coat.png" alt=""></p>
+                <p>如果我想同时把他们可视化该怎么办？这很容易，只要它们互不影响——也就是说它们是<strong>独立的</strong>。比如说，我今天穿T恤还是雨衣与下周的天气如何是没有关联的。我们可以用坐标轴表示变量：</p>
+                <p><img src="/img/visual-information-theory/prob-2D-independent-rain.png" alt=""></p>
+                <p>注意到水平和垂直方向上的直线一直延伸到边界。<em>这就是独立性所表现出来的样子<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup></em>!我穿外套的概率并不会因为接下来的一周将会下雨的事实而改变。换句话说，我穿外套并且下周会下雨的概率，就等于我穿外套的概率，乘上下周下雨的概率。它们并不互相影响。</p>
+                <p>当变量之间互相影响时，对于某些情形的组合会有额外的概率，同时另一些组合的概率会消失。下雨天我穿外套的概率会额外增加，因为这两者之间是有关联的，一个因素的存在会使得另一个因素更容易发生。在某个下雨天我穿外套的概率高于我在任意天气下穿外套的概率，也高于任意一天会下雨的概率。</p>
+                <p>从图形上看，一些方块区域由于得到了额外的概率而膨胀，而另一些区域由于所对应的事件不太容易同时发生而收缩。</p>
+                <p><img src="/img/visual-information-theory/prob-2D-dependant-rain-squish.png" alt=""></p>
+                <p>虽然这看起来有点酷，但是对于理解到底发生了什么并没有很大的用处。</p>
+                <p>换一种方法，让我们关注某一个变量，例如天气。我们知道某一天是晴天或者雨天的可能性。对每一种情况，我们可以考虑条件概率。在晴天我有多大的可能性会穿T恤？在雨天我又有多大的可能性穿外套？</p>
+                <p><img src="/img/visual-information-theory/prob-2D-factored-rain-arrow.png" alt=""></p>
+                <p>下雨的概率是25%。如果下雨，那么我有75%的几率穿外套。因此，下雨并且我穿外套的概率是25%乘以75%，大概是%19。这个概率等于下雨的概率，乘上在雨天我穿外套的概率。我们把它写成：
+                  <span>$$\begin{aligned}
+                    p(rain, coat) = p(rain)\times p(coat|rain)
+                    \end{aligned}$$</span><!-- Has MathJax -->
+                </p>
+                <p>上面这个式子是概率论最基本恒等式之一的一个简单情形：
+                  <span>$$\begin{aligned}
+                    p(x,y) = p(x)\times p(y|x)
+                    \end{aligned}$$</span><!-- Has MathJax -->
+                </p>
+                <p>我们在对概率分布进行分解，把它变成两个部分的乘积。首先我们考虑一个变量（例如天气）取某个值的可能性。然后再看另外一个变量（例如我穿的衣服）在上一个变量值给定的条件下取某个值的可能性。</p>
+                <p>选取哪个变量作为开始是随意的。我们可以先考虑我穿什么衣服，然后再考虑该条件下的天气。这可能让人觉得有点违反直觉，因为我们知道天气影响穿着是一个因果关系，反过来的话就没有这样的因果关系了，但是上述的做法仍然行得通！</p>
+                <p>让我们继续考虑一个例子。如果我们随便挑一天，在那一天我有38%的概率会穿外套。如果我们知道当天我一定会穿外套，那么那天有多大的可能性在下雨？当然，和晴天相比，在雨天我更可能穿外套，但是在加州下雨可是个稀有事件，所以折衷算来有50%的几率在下雨。因此，（在那天）下雨并且我穿外套的概率就是我穿外套的概率（38%），乘上当我穿外套时下雨的概率(50%)，大概是19%。
+                  <span>$$\begin{aligned}
+                    p(rain, coat) = p(coat)\times p(rain|coat)
+                    \end{aligned}$$</span><!-- Has MathJax -->
+                </p>
+                <p>这给了我们另外一个将上述概率分布进行可视化的视角。</p>
+                <p><img src="/img/visual-information-theory/prob-2D-factored1-clothing-B.png" alt=""></p>
+                <p>注意该图中标签的意义与上一个图所表示的有些许不同：t-shirt和coat现在代表边缘概率，即不考虑天气情况时我穿哪样衣服的概率。换句话说，现在rain和sunny标签都有两个，分别对应着在穿T恤的条件下和穿外套的条件下的雨天和晴天的概率。</p>
+                <p>（你或许曾经听过贝叶斯定理。如果你想的话，可以把该定理看成是在上述两个可视化视角间进行切换的方法！）</p>
+                <h1 id="延伸-辛普森悖论"><a href="#延伸-辛普森悖论" class="headerlink" title="延伸: 辛普森悖论"></a>延伸: 辛普森悖论</h1>
+                <p>这些对概率分布进行可视化的技巧是有用的吗？我想是毫无疑问的！我们还要过一会儿才用这个技巧对信息论进行可视化，因此我打算先偏离一下主线，用这个技巧来探讨一下辛普森悖论（Simpson’s
+                  Paradox）。辛普森悖论是一个非常反直觉的统计情形。很难在直觉上去理解问题所在。Michael Nielsen写了一篇精彩的文章<a target="_blank" rel="noopener" href="http://michaelnielsen.org/reinventing_explanation/"><em>Reinventing Explanation</em></a>来探究对该问题的不同解释方式。我想尝试一下使用我们之前建立的技巧来解释这个问题，</p>
+                <p>对两种不同的肾结石疗法进行临床试验。一半患者接受疗法A，另一半接受疗法B。结果显示使用疗法B进行治疗的患者存活率更高。</p>
+                <p><img src="/img/visual-information-theory/simpson-margin.png" alt=""></p>
+                <p>然而，（结果又显示）结石块较小的患者使用疗法A治疗的存活率较高，结石块较大的患者也是使用疗法A治疗的存活率较高！这怎么可能？</p>
+                <p>问题的关键在于这个实验并没有良好地进行随机化。接受疗法A进行治疗的患者更多的是具有大结石块的患者，而接受疗法B的患者更多地具有小结石块。</p>
+                <p><img src="/img/visual-information-theory/simpson-participants.png" alt=""></p>
+                <p>事实证明，结石块较小的患者更容易存活。</p>
+                <p>为了更好进行理解，我们可以把上面两幅图合并在一起。结果是一张表示存活率的三维图像，并且按照结石块大小进行了区域划分。</p>
+                <p><img src="/img/visual-information-theory/simpson-separated-note.png" alt=""></p>
+                <p>我们可以看见在大结石块和小结石块这两种情形中，疗法A都优于疗法B。疗法B看起来更好仅仅是因为它施用的对象更多地属于易治疗的群体。</p>
+                <h1 id="编码"><a href="#编码" class="headerlink" title="编码"></a>编码</h1>
+                <p>有了对概率进行可视化的方法，我们现在可以研究一下信息论了。</p>
+                <p>让我向你介绍一下我的假想的朋友鲍勃。鲍勃非常喜欢动物。他不停地谈论它们。事实上，他任何时候只说四个词：dog，cat，fish和bird。</p>
+                <p>几周之前，鲍勃搬到了澳大利亚（虽然他只是我想象中的虚构人物）。然后，他决定只想通过二进制码进行通讯。我从鲍勃那里收到的所有（虚构的）信息都长成这样：</p>
+                <p><img src="/img/visual-information-theory/message.png" alt=""></p>
+                <p>为了交流，鲍勃和我建立了一套编码，一种把词映射到一个比特（bit）串的方式。</p>
+                <p><img src="/img/visual-information-theory/code-2bit.png" alt=""></p>
+                <p>为了发送消息，鲍勃把某一个符号（单词）用相应的码字（codeword）替代，然后把这些码字串接起来形成编码字符串。</p>
+                <p><img src="/img/visual-information-theory/encode-2bit.png" alt=""></p>
+                <h1 id="可变长度编码"><a href="#可变长度编码" class="headerlink" title="可变长度编码"></a>可变长度编码</h1>
+                <p>不幸的是，通讯服务在假想的澳大利亚是很贵的。我必须为每一条从鲍勃那里接收到的信息中的每一个比特付出5美元。我是不是忘记说鲍勃是个话痨了？为了防止我破产，鲍勃和我决定找找看有没有办法把信息的平均长度变得短一些。</p>
+                <p>事实上鲍勃使用各个词的频率并不相同。他非常喜欢狗，总是在谈论它们。偶尔他会谈论一些别的动物，特别是他的狗喜欢追的猫，但大部分情况下他还是在提起狗。这是他的词频分布图：</p>
+                <p><img src="/img/visual-information-theory/DogWordFreq.png" alt=""></p>
+                <p>看起来有点希望。我们的旧编码为每一个词分配的码字的长度都是2个比特，无论这些词有多常用。</p>
+                <p>有一个很好的方法对编码表进行可视化表达。在下面的示意图中，我们用纵坐标来表示每个
+                  词出现的概率<span>$p(x)$</span><!-- Has MathJax -->，横坐标表示词对应码字的长度<span>$L(x)$</span><!-- Has MathJax -->。注意到整幅图的面积就是我们
+                  发送的码字的平均长度，在当前的情况下是2比特。</p>
+                <p><img src="/img/visual-information-theory/OldCode.png" alt=""></p>
+                <p>或许我们非常聪明并且提出了一种可变长度的编码方式，刻意地让较常用的词对应的码字较短。这里有一个难题是码字之间是互相竞争的——让一些码字变短会使得另一些码字变长。为了减小信息的长度，我们憧憬着让所有的码字都变短，但是我们尤其想让较常用的单词的码字变短。所以得到的编码是较常用的词有着较短的码字（比如dog），而较不常用的词对应的码字较长（比如bird）。</p>
+                <p><img src="/img/visual-information-theory/code.png" alt=""></p>
+                <p>让我们把新的编码也可视化。注意到最常用的码字变得短了，虽然那些不常用的码字变长了。两相抵消，图中的面积变小了。这对应着更小的码字长度期望。现在码字的平均长度变成了1.75比特！</p>
+                <p><img src="/img/visual-information-theory/NewCode.png" alt=""></p>
+                <p>（你或许会想：为什么不把1也作为一个码字呢？非常不幸，这样在对编码字符串进行解码时会导致歧义。我们过会儿会讨论这件事。）</p>
+                <p>事实上这个编码是所有编码中最优的一种。对于上述的概率分布，没有任何一种编码能使得平均码字长度低于1.75比特。</p>
+                <p>总是存在这样一个基本的底限。不管我们说什么，按什么顺序说，在上述的概率分布下，都会使得我们的码字平均长度至少为1.75比特。无论我们多聪明，都不可能使得平均码字长度变小。我们把这个基本底限称为这个分布的<strong>熵（entropy）</strong>——过会儿我们会更详细地讨论它。</p>
+                <p><img src="/img/visual-information-theory/EntropyOptimalLengthExample.png" alt=""></p>
+                <p>如果我们想弄明白这个底限存在的原因，那么最关键的就是理解码字长度之间的权衡。一旦我们弄明白该如何权衡，我们就能够知道最优的编码应该是什么样的。</p>
+                <h1 id="码字空间"><a href="#码字空间" class="headerlink" title="码字空间"></a>码字空间</h1>
+                <p>长度为1比特的码字有两个：“0”和“1”。长度为2比特的码字有四个：“00”, “01”,“10”和“11”。每多加一个比特，可用码字的数量就翻番。</p>
+                <p><img src="/img/visual-information-theory/CodeSpace.png" alt=""></p>
+                <p>我们关注的是变长编码，在这种方式下一些码字的长度比另一些码字长。我们可以用一种简单的分配方式，比如直接产生8个长度为3比特的码字，也可以做得复杂一些，例如产生2个长度为2比特的码字，然后加上4个长度为3比特的码字。是什么决定了我们可以有多少个不同长度的码字呢？</p>
+                <p>回想一下，鲍勃把他的消息中的单词用码字替代，然后把码字串接起来变成编码字符串。</p>
+                <p><img src="/img/visual-information-theory/encode.png" alt=""></p>
+                <p>但是对变长编码进行解码时有一个小问题需要我们注意。我们如何把编码字符串分解成码字呢？当所有的码字长度一致时，方法是很简单的——只要每隔一段距离分割一下就好。但是当码字长度不一致时，我们需要仔细考虑编码字符串的内容。</p>
+                <p>我们非常希望所设计的编码有唯一的解码方式。编码中存在歧义是我们不愿看见的。如果我们有一些特殊的“码字截止”符号，事情就会容易地多。但我们做不到——我们的编码中只能有两种符号，“0”或“1”。我们只能够去观察码字串联成的序列，然后找出每一个码字的截止位置。</p>
+                <p>让编码只有唯一的解码方式是完全可以做到的。比如，假设我们有两个码字：“0”和“01”。那么对于编码字符串“0100111”,我们无法知道第一个码字是什么——它既可能是“0”,也可能是“01”<sup id="fnref:4"><a href="#fn:4" rel="footnote">4</a></sup>。我们希望码字拥有这样的性质：对于任意一个码字，不可能通过在它的末尾添加一些新的字符来形成新的码字<sup id="fnref:5"><a href="#fn:5" rel="footnote">5</a></sup>。换句话说，任何码字都不能是其它码字的前缀。这被称为<strong>前缀性质（prefix property）</strong>，具有这种性质的编码叫做<strong>前缀编码</strong>。</p>
+                <p>对于前缀编码，一个有趣的发现是：每使用一个码字都会牺牲掉一些原本可用的其它码字。如果我们使用了码字“01”,我们就无法把其它以“01”为前缀的字符串作为码字。“010”或者“011010110”都没法再用了，不然就会有歧义隐患——所以我们得和这些字符串说再见了。</p>
+                <p><img src="/img/visual-information-theory/CodeSpaceUsed.png" alt=""></p>
+                <p>在所有可用的码字中，有四分之一是以“01”开头的，所以当使用“01”作为码字时，我们就损失了四分之一的码字空间。这是为使用一个长度为2比特的码字所付出的代价！这个代价所带来的影响是，其它码字的长度都必须变长。不同码字之间的长度权衡是一直存在着的。一个较短的码字会让我们损失掉更多的码字空间，使得其它的码字无法缩短。我们需要寻找的是一种合理分配各个码字长度的方法！</p>
+                <h1 id="最优编码"><a href="#最优编码" class="headerlink" title="最优编码"></a>最优编码</h1>
+                <p>你可以把寻找最优编码看成是：在有限的预算下尽可能使用较短的码字<sup id="fnref:6"><a href="#fn:6" rel="footnote">6</a></sup>。我们使用一个码字的代价就是牺牲掉一部分其它可用的码字<sup id="fnref:7"><a href="#fn:7" rel="footnote">7</a></sup>。</p>
+                <p>使用长度为0的码字的代价是1,即所有可能的码字都没法用了——如果你想使用一个长度为0的码字，这意味着你无法使用任何其它的码字，其实就是无法使用所有码字。使用长度为1的码字，比如“0”，它的代价是<span>$\dfrac{1}{2}$</span><!-- Has MathJax -->，因为有一半的可用码字是以“0”开头的。使用长度为2的码字，例如“01”，相应的代价是<span>$\dfrac{1}{4}$</span><!-- Has MathJax -->，因为有四分之一的码字以“01”为前缀。事实上，使用一个码字的代价随着该码字的长度增长以<em>指数(exponentially)</em>速度下降。</p>
+                <p><img src="/img/visual-information-theory/code-costonly.png" alt=""></p>
+                <p>注意到如果代价是以（自然）指数速度下降，那么图中深色部分的高度和面积是一致的<sup id="fnref:8"><a href="#fn:8" rel="footnote">8</a></sup>,<sup id="fnref:9"><a href="#fn:9" rel="footnote">9</a></sup>！</p>
+                <p>我们想要使用较短的码字是因为这样能使得平均信息长度变短。每使用一个码字会使得平均信息长度增加，增加的量等于该码字的长度乘上码字的出现概率。比如说，如果我们想使用一个长度为4比特的码字，该码字的使用频率为50%，那么我们的平均信息长度就会比不使用这个码字的时候多2比特。可以画一个矩形来示意。</p>
+                <p><img src="/img/visual-information-theory/code-lengthcontrib.png" alt=""></p>
+                <p>信息的平均长度以及使用码字所花费的代价都和码字的长度息息相关。使用一个码字所付出的代价由码字的长度所决定。而码字的长度又控制了该码字对于平均信息长度的影响。我们可以把码字的代价和对于平均信息长度的贡献放在一幅图中表示。</p>
+                <p><img src="/img/visual-information-theory/code-cost.png" alt=""></p>
+                <p>使用短的码字能够减少平均信息长度，但是会更多地消耗码字空间，而使用长的码字会增加平均信息长度，但是不会占用太多码字空间。</p>
+                <p><img src="/img/visual-information-theory/code-cost-longshort.png" alt=""></p>
+                <p>怎样才是使用我们有限预算的最好方式呢<sup id="fnref:10"><a href="#fn:10" rel="footnote">10</a></sup>？我们应该为某个词分配多少花费来产生相应的码字呢<sup id="fnref:11"><a href="#fn:11" rel="footnote">11</a></sup>？</p>
+                <p>正如人们会对较常使用的工具花费更多的钱一样，我们也愿意为较常使用的码字花费更多的代价。我们有一个自然而然的想法：按照词汇使用的频繁程度来为对应的码字付出相应的开支。所以，如果一个词汇使用的频率是50%，那么我们就为该词对应的码字付出50%的开支。如果一个词汇只有1%的使用概率，那么我们就只会为它对应的码字花费1%的开支，因为即使这个码字非常长我们也不怎么在乎。</p>
+                <p>这是一个非常自然的做法，但是这样做能保证编码的方式最有效率吗？确实是这样的，我将要证明它！</p>
+                <p><em>接下来的证明是通过图形的方式并且容易理解的，但是仍然需要动点脑子，这是整篇文章中最难的部分。读者可以直接使用结论而跳过证明的部分。</em></p>
+                <p>让我们画一个需要发送两个词汇的例子。词汇<span>$a$</span><!-- Has MathJax -->使用的概率是<span>$p(a)$</span><!-- Has MathJax -->而词汇<span>$b$</span><!-- Has MathJax -->使用的概率是<span>$p(b)$</span><!-- Has MathJax -->。我们使用上述的方法来分配开支，即为词汇<span>$a$</span><!-- Has MathJax -->指定一个会占用<span>$p(a)$</span><!-- Has MathJax -->码字空间的码字，而为词汇<span>$b$</span><!-- Has MathJax -->指定一个会占用<span>$p(b)$</span><!-- Has MathJax -->码字空间的码字。</p>
+                <p><img src="/img/visual-information-theory/code-auction-balanced-noderivs.png" alt=""></p>
+                <p>代表码字代价的边界和平均长度贡献的边界完美地重合了。这意味着什么吗？</p>
+                <p>嗯，让我们考虑一下当稍微改变码字长度时，码字代价和长度贡献会产生何种变化。如果我们稍微增加一点码字的长度，那么平均信息长度增加的量与边界的高度成一定比例，而码字代价减小的量也与边界的高度成比例<sup id="fnref:12"><a href="#fn:12" rel="footnote">12</a></sup>。</p>
+                <p><img src="/img/visual-information-theory/code-derivs.png" alt=""></p>
+                <p>所以，让<span>$a$</span><!-- Has MathJax -->的码字变短一些所付出的代价是<span>$p(a)$</span><!-- Has MathJax --><sup id="fnref:13"><a href="#fn:13" rel="footnote">13</a></sup>。同时，我们并不是同样关心所有码字的长度，我们倾注的关心程度与该码字的使用频率有关。对于词汇<span>$a$</span><!-- Has MathJax -->，关心的程度就是<span>$p(a)$</span><!-- Has MathJax -->。把<span>$a$</span><!-- Has MathJax -->的码字变短1比特所带来的收益就是<span>$p(a)$</span><!-- Has MathJax -->。</p>
+                <p>有意思的是，上述分析得到的两个导数是相同的。这意味着我们初始的预算分配方案有一个有趣的性质：如果我们有多余的预算，想要把某个码字的长度减小，那么缩短任意一个码字所带来的效果都是等效的<sup id="fnref:14"><a href="#fn:14" rel="footnote">14</a></sup>。最终我们真正关心的是<strong>收益/代价</strong>比——这决定了我们应该把预算投给谁。在现在的例子中，这个比例是<span>$\dfrac{p(a)}{p(a)}$</span><!-- Has MathJax -->，实际上就是1。这和<span>$p(a)$</span><!-- Has MathJax -->是多少无关——<span>$\dfrac{p(a)}{p(a)}$</span><!-- Has MathJax -->永远是1。对于另外一个词汇我们也可以有相同的论证。所有码字的收益/代价比都是1,所以把额外的预算分配给哪个码字都一样。</p>
+                <p><img src="/img/visual-information-theory/code-auction-balanced.png" alt=""></p>
+                <p>毫无疑问，我们不能改变我们的预算<sup id="fnref:15"><a href="#fn:15" rel="footnote">15</a></sup>。以上的论述并不能证明我们的分配方式是最优的。为了证明最优性，来考虑另一个分配方式，更多地把一些预算分配给一个码字而减少另一个码字的预算。我们把给<span>$b$</span><!-- Has MathJax -->的预算减少<span>$\epsilon$</span><!-- Has MathJax -->，然后投入到<span>$a$</span><!-- Has MathJax -->上。这使得<span>$a$</span><!-- Has MathJax -->的码字变短，而<span>$b$</span><!-- Has MathJax -->的码字变长。</p>
+                <p>现在为<span>$a$</span><!-- Has MathJax -->分配更短的码字所对应的代价是<span>$p(a)+\epsilon$</span><!-- Has MathJax -->，而<span>$b$</span><!-- Has MathJax -->的代价是<span>$p(b)-\epsilon$</span><!-- Has MathJax -->。但是为它们分配更短码字的收益都还是保持不变的。这使得对<span>$a$</span><!-- Has MathJax -->投入更多预算的收益/代价比为<span>$\dfrac{p(a)}{p(a)+\epsilon}$</span><!-- Has MathJax -->，是小于1的。与此同时，对<span>$b$</span><!-- Has MathJax -->投入更多预算的收益/代价比为<span>$\dfrac{p(b)}{p(b)-\epsilon}$</span><!-- Has MathJax -->，是大于1的。</p>
+                <p><img src="/img/visual-information-theory/code-auction-eps.png" alt=""></p>
+                <p>代价不再是平衡的了。把预算投给<span>$b$</span><!-- Has MathJax -->比投给<span>$a$</span><!-- Has MathJax -->更好。投资者会喊：买进<span>$b$</span><!-- Has MathJax -->！卖出<span>$a$</span><!-- Has MathJax -->!我们也这样做，最后就会回到我们最初的分配方案上。所有的预算分配方案都可以通过向我们之前提出的那个方案靠拢而变得更优。</p>
+                <p>我们最初的分配方案——即为每个码字分配的预算与它的使用频率成正比——不仅仅是一个自然而然的方案，更是一个最优的方案。（虽然上面的证明只考虑了两个码字的情况，但是推广到更多码字的情况是很容易的。）</p>
+                <p>（细心的读者可能已经注意到我们的最优分配方案有可能会使得某些码字具有非整数长度。这看起来很令人不安！这意味着什么？嗯，当然，在实践中如果你想要通过发送一个码字来进行交流，那么你必须对码字的长度进行四舍五入。但正如我们之后会看见的，有可能通过一次性发送多个非整数长度的码字来使得事情变得合理！现在先请你多一点耐心！）</p>
+                <h1 id="熵的计算"><a href="#熵的计算" class="headerlink" title="熵的计算"></a>熵的计算</h1>
+                <p>回想起长度为<span>$L$</span><!-- Has MathJax -->的码字的代价是<span>$\dfrac{1}{2^{L}}$</span><!-- Has MathJax -->。我们把这个算式转换一下，得到给定代价下的码字长度为：<span>$\log_{2}\left(\dfrac{1}{cost}\right)$</span><!-- Has MathJax -->。因为对于<span>$x$</span><!-- Has MathJax -->的码字，我们所花费的代价是<span>$p(x)$</span><!-- Has MathJax -->，所以该码字的长度就是<span>$\log_{2}\left(\dfrac{1}{p(x)}\right)$</span><!-- Has MathJax -->。这就是码字长度的最佳选择。</p>
+                <p><img src="/img/visual-information-theory/entropy-def-notitle.png" alt=""></p>
+                <p>在之前，我们讨论过，对于所用词汇服从某个特定概率分布<span>$p$</span><!-- Has MathJax -->的通讯事件，信息的平均长度存在一个基本底限。这个限制，即使用最优编码时的平均信息长度，被称为<span>$p$</span><!-- Has MathJax -->的熵，记为<span>$H(p)$</span><!-- Has MathJax -->。现在我们知道了码字的最优长度如何确定，接下来我们就可以算熵了！
+                  <span>$$\begin{aligned}
+                    H(p)=\sum_{x}p(x)\log_{2}\left(\frac{1}{p(x)}\right)
+                    \end{aligned}$$</span><!-- Has MathJax -->
+                </p>
+                <p>（人们通常根据恒等式<span>$\log(\frac{1}{a})=-\log(a)$</span><!-- Has MathJax -->把熵写为
+                  <span>$$\begin{aligned}
+                    H(p)=-\sum p(x)\log_{2}(p(x))
+                    \end{aligned}$$</span><!-- Has MathJax -->
+                  我觉得我的写法更直观一些，所以在文章中我会使用我的写法。）
+                </p>
+                <p>如果我想要能够用每个词汇进行交流，那么无论我如何努力，码字的平均长度都至少是那么多比特。</p>
+                <p>通讯信息所需的平均长度有时清晰地指明了对信息进行压缩的空间。除此之外我们还有什么理由去关心这个底限吗？当然有！这个底限描述了我对于事物的不确信程度，并且提供了一种对信息进行量化的方式<sup id="fnref:16"><a href="#fn:16" rel="footnote">16</a></sup>。</p>
+                <p>如果我确切地知道接下来会发生什么，那么我根本就不用通讯！如果存在两个事件，各自发生的概率都是50%，那么我只需要用1个比特进行通讯。但是如果有64个事件，它们发生的概率都相等，那么我就得用6个比特进行通讯<sup id="fnref:17"><a href="#fn:17" rel="footnote">17</a></sup>。概率分布越集中，我就越能找到一个良好的编码使得平均信息长度较短。概率分布越分散，我所发送的信息的平均长度就得越长。</p>
+                <p>一般来说，发生的事情越不容易确定，当发现究竟发生了什么时，我能学到的越多<sup id="fnref:18"><a href="#fn:18" rel="footnote">18</a></sup>。</p>
+                <h1 id="交叉熵"><a href="#交叉熵" class="headerlink" title="交叉熵"></a>交叉熵</h1>
+                <p>在鲍勃搬到澳大利亚的不久前，他和爱丽丝（另一个我想象中的虚构人物）结婚了。使我和我脑海中的其他人物吃惊的是，爱丽丝不是一个狗狗爱好者。她更喜欢猫咪。尽管如此，他俩还是找到了共同点，就是都非常喜欢动物，同时词汇量也非常小。</p>
+                <p><img src="/img/visual-information-theory/DogCatWordFreq.png" alt=""></p>
+                <p>他们俩都使用同样的单词，只是使用各个词的频率不同。鲍勃喜欢谈论狗，而爱丽丝喜欢谈论猫。</p>
+                <p>刚开始，爱丽丝使用鲍勃的编码来向我发送消息。不幸的是，她的信息编码地有点浪费。鲍勃的编码对于他自己所用词汇的概率分布而言是最优的。爱丽丝所用的词汇有不同的概率分布，因此鲍勃的编码对于爱丽丝而言就可能不是最优的。用鲍勃的编码方式对鲍勃的消息进行编码，得到的码字的平均长度是1.75比特，而使用这种编码对爱丽丝的消息进行编码，得到的码字的平均长度是2.25比特。如果他们使用词汇的分布差异更大的话，得到的结果会更糟！</p>
+                <p>使用一种分布的最优编码对另一个分布进行编码，得到的码字的平均长度称为<strong>交叉熵(cross-entropy)</strong>。正式一点，我们可以作出如下定义<sup id="fnref:19"><a href="#fn:19" rel="footnote">19</a></sup>：
+                  <span>$$\begin{aligned}
+                    H_{p}(q)=\sum_{x}q(x)\log_{2}\left(\frac{1}{p(x)}\right)
+                    \end{aligned}$$</span><!-- Has MathJax -->
+                </p>
+                <p>在上述的例子中，我们得到的是在（喜欢狗狗的）鲍勃的词频下的（喜欢猫咪的）爱丽丝的词汇分布的交叉熵。</p>
+                <p><img src="/img/visual-information-theory/CrossEntropyDef.png" alt=""></p>
+                <p>为了使我们通讯的成本降低，我请求爱丽丝使用她自己的编码。值得庆幸的是，这确实减小了她的信息的平均长度。但这也带来了一个新问题：有时候鲍勃会不小心用到爱丽丝的编码。出人意料地，鲍勃使用爱丽丝编码的情形比爱丽丝使用鲍勃编码的情形更糟！</p>
+                <p>所以，现在我们有四种可能性：</p>
+                <ul>
+                  <li>
+                    <p>鲍勃使用他自己的编码（<span>$H(p)=1.75$</span><!-- Has MathJax -->比特）</p>
+                  </li>
+                  <li>
+                    <p>爱丽丝使用鲍勃的编码（<span>$H_{p}(q)=2.25$</span><!-- Has MathJax -->比特）</p>
+                  </li>
+                  <li>
+                    <p>爱丽丝使用她自己的编码（<span>$H(q)=1.75$</span><!-- Has MathJax -->比特）</p>
+                  </li>
+                  <li>
+                    <p>鲍勃使用爱丽丝的编码（<span>$H_{q}(p)=2.375$</span><!-- Has MathJax -->比特）</p>
+                  </li>
+                </ul>
+                <p>仅凭直觉来考虑这里的情况并不容易<sup id="fnref:20"><a href="#fn:20" rel="footnote">20</a></sup>。比如，我们可以看到<span>$H_{p}(q)\neq H_{q}(p)$</span><!-- Has MathJax -->。有没有一种方法可以让我们观察这四种情况彼此之间的联系呢？</p>
+                <p>在下图中，每一个子图都表示上述四种情况之一。在每一个子图中我们都使用曾经用过的方法来把平均信息长度表示出来。这些子图按照方块区域排列，使得并排的两幅图表示被编码的词汇来自同一个分布，而上下堆叠的两幅图表示使用的编码来自于同一个分布。这样使得你能够轻易地在不同的视角之间切换。</p>
+                <p><img src="/img/visual-information-theory/CrossEntropyCompare.png" alt=""></p>
+                <p>你能够看出为什么<span>$H_{p}(q)\neq H_{q}(p)$</span><!-- Has MathJax -->吗？<span>$H_{q}(p)$</span><!-- Has MathJax -->更大一些是因为存在一个词汇（蓝色）在<span>$p$</span><!-- Has MathJax -->中很常用但是码字却很长，这是由于它在<span>$q$</span><!-- Has MathJax -->的分布中很不常用。另一方面，在<span>$q$</span><!-- Has MathJax -->中的常用词汇虽然在<span>$p$</span><!-- Has MathJax -->中也不太常用，但是这个差异带来的影响较小，使得<span>$H_{p}(q)$</span><!-- Has MathJax -->不会像<span>$H_{q}(p)$</span><!-- Has MathJax -->那么大<sup id="fnref:21"><a href="#fn:21" rel="footnote">21</a></sup>。</p>
+                <p>因此交叉熵不具有对称性。</p>
+                <p>那么，为什么你应该关注交叉熵呢？嗯，交叉熵给了我们一种表达两个概率分布差异程度的方法。两个概率分布<span>$p$</span><!-- Has MathJax -->与<span>$q$</span><!-- Has MathJax -->的差异越大，<span>$p$</span><!-- Has MathJax -->相对于<span>$q$</span><!-- Has MathJax -->的交叉熵就会比<span>$p$</span><!-- Has MathJax -->自身的熵大得更多。</p>
+                <p><img src="/img/visual-information-theory/CrossEntropyPQ.png" alt=""></p>
+                <p>同样的，<span>$p$</span><!-- Has MathJax -->与<span>$q$</span><!-- Has MathJax -->的差异越大，也越会加剧<span>$q$</span><!-- Has MathJax -->相对于<span>$p$</span><!-- Has MathJax -->的交叉熵比<span>$p$</span><!-- Has MathJax -->的熵大的程度。</p>
+                <p><img src="/img/visual-information-theory/CrossEntropyQP.png" alt=""></p>
+                <p>最有趣的地方在于熵与交叉熵之间的差。这个差代表着某个分布下的消息由于使用另一个分布下的编码，而额外使用的长度的平均值。如果这两个分布是相同的，那么这个差就是零。随着分布的差异变大，得到的差也会变大。</p>
+                <p>我们把这个差叫做<strong>库尔贝克-莱布勒散度（Kullback–Leibler divergence）</strong>，或者简称为KL散度。<span>$p$</span><!-- Has MathJax -->相对于<span>$q$</span><!-- Has MathJax -->的KL散度记为<span>$D_{q}(p)$</span><!-- Has MathJax --><sup id="fnref:22"><a href="#fn:22" rel="footnote">22</a></sup>，它被定义为<sup id="fnref:23"><a href="#fn:23" rel="footnote">23</a></sup>：
+                  <span>$$\begin{aligned}
+                    D_{q}(p)=H_{q}(p)-H(p)
+                    \end{aligned}$$</span><!-- Has MathJax -->
+                </p>
+                <p>KL散度最优雅的地方在于它就像是两个分布之间的距离。它衡量了两者之间的差异有多大！（如果你仔细斟酌这个想法，最终你将会进入信息几何（information geometry）的领域 。）</p>
+                <p>交叉熵和KL散度在机器学习中是超级有用的。常见地，我们想让一个分布与另一个相接近。例如，我们会想让预测出来的分布和真实的分布相接近。KL散度给了我们一个自然的方式去达到这个目标，所以它被广泛地使用。</p>
+                <h1 id="熵与多维变量"><a href="#熵与多维变量" class="headerlink" title="熵与多维变量"></a>熵与多维变量</h1>
+                <p>让我们回到之前的天气与穿衣的例子上来：</p>
+                <p><img src="/img/visual-information-theory/prob-2D-factored1-detail.png" alt=""></p>
+                <p>我的妈妈，就像大多数父母那样，时常担心我不好好穿衣服。（她的担忧是有道理的——我经常在冬天忘记穿外套。）所以，她经常想同时知道我所在地方的天气以及我正在穿的衣服。我需要用多少比特来把这些信息传输给她呢？</p>
+                <p>嗯，考虑这个问题的一个简单方式是把概率分布拉直：</p>
+                <p><img src="/img/visual-information-theory/prob-2D-factored1-flat.png" alt=""></p>
+                <p>现在我们可以得出这些事件对应的最优码字，并且可以算出平均消息长度：</p>
+                <p><img src="/img/visual-information-theory/Hxy-flat.png" alt=""></p>
+                <p>我们把这称为<span>$X$</span><!-- Has MathJax -->和<span>$Y$</span><!-- Has MathJax -->的<strong>联合熵</strong>,定义如下：</p>
+                <span>$$\begin{aligned}
+                  H(X,Y)=\sum_{x,y}p(x,y)\log_{2}\left(\frac{1}{p(x,y)}\right)
+                  \end{aligned}$$</span><!-- Has MathJax -->
+                <p>这和我们通常的定义是一致的，除了使用二维变量代替一维变量。</p>
+                <p>一个更好地思考方式是不把概率分布拉值，而是把码字长度看成第三维。现在熵可以用体积来表示！</p>
+                <p><img src="/img/visual-information-theory/Hxy-3D.png" alt=""></p>
+                <p>但是假如我妈已经知道了天气情况。她可以从新闻中知晓。那么现在我需要提供多少信息呢？</p>
+                <p>看起来我似乎还是得把我穿什么衣服的信息完整地发出去<sup id="fnref:24"><a href="#fn:24" rel="footnote">24</a></sup>。但事实上我需要传送的信息量可以少一些，因为天气信息强烈地暗示了我将会穿什么衣服！我们来分别考虑雨天和晴天的情况。</p>
+                <p><img src="/img/visual-information-theory/HxCy-sep.png" alt=""></p>
+                <p>在这两种情况下，通常我都不必发送太多的信息，因为天气情况让我能够很好地猜测正确的答案是什么<sup id="fnref:25"><a href="#fn:25" rel="footnote">25</a></sup>。当天气晴朗时，我可以使用特制的晴天最优编码，当下雨时，我可以使用雨天最优编码。在两种情况下，我都比使用通用编码发送了更少的信息。要计算我给我妈发送信息的平均长度，我只需要把两种情况合在一起…</p>
+                <p><img src="/img/visual-information-theory/HxCy.png" alt=""></p>
+                <p>我们把这称为<strong>条件熵</strong>。如果你把它形式化成一个等式，会得到：
+                  <span>$$\begin{aligned}
+                    H(X|Y) = &amp; \sum_{y}p(y)\sum_{x}p(x|y)\log_{2}\left(\frac{1}{p(x|y)}\right) \\
+                    = &amp; \sum_{x,y}p(x,y)\log_{2}\left(\frac{1}{p(x|y)}\right)
+                    \end{aligned}$$</span><!-- Has MathJax -->
+                </p>
+                <h1 id="互信息"><a href="#互信息" class="headerlink" title="互信息"></a>互信息</h1>
+                <p>在上一节中，我们观察到，知道一个变量的情况意味着传输另一个变量所需的信息量变少了。</p>
+                <p>一个很好的理解方式是把信息量想象成一个长条。如果不同变量的信息之间有共享的部分，那么相应的信息条会有部分重叠。例如，<span>$X$</span><!-- Has MathJax -->和<span>$Y$</span><!-- Has MathJax -->之间存在着一些共享的信息，因此<span>$H(X)$</span><!-- Has MathJax -->和<span>$H(Y)$</span><!-- Has MathJax -->对应的信息条会有部分重叠。由于<span>$H(X,Y)$</span><!-- Has MathJax -->是两者的信息量之和，所以把<span>$H(X)$</span><!-- Has MathJax -->和<span>$H(Y)$</span><!-- Has MathJax -->对应的信息条合并起来就得到<span>$H(X,Y)$</span><!-- Has MathJax -->对应的长条<sup id="fnref:26"><a href="#fn:26" rel="footnote">26</a></sup>。
+                  <img src="/img/visual-information-theory/Hxy-info-1.png" alt="">
+                </p>
+                <p>当我们开始这样思考问题，许多事情都变得简单了。</p>
+                <p>比如，我们之前提到同时传输<span>$X$</span><!-- Has MathJax -->和<span>$Y$</span><!-- Has MathJax -->（联合熵<span>$H(X,Y)$</span><!-- Has MathJax -->）比只传输<span>$X$</span><!-- Has MathJax -->（边缘熵(marginal entropy)<span>$H(X)$</span><!-- Has MathJax -->）需要更多的信息量。但是一旦你已经知道<span>$Y$</span><!-- Has MathJax -->的情况了，那么传输<span>$X$</span><!-- Has MathJax -->的所需的信息量（条件熵<span>$H(X|Y)$</span><!-- Has MathJax -->）将会更少！</p>
+                <p><img src="/img/visual-information-theory/Hxy-overview.png" alt=""></p>
+                <p>这听起来有点复杂，但如果我们从信息条的角度来考虑就将变得很简单。<span>$H(X|Y)$</span><!-- Has MathJax -->是向某个已经知道<span>$Y$</span><!-- Has MathJax -->的情况的人传输<span>$X$</span><!-- Has MathJax -->的情况所需要使用的信息量。同时，这也是<span>$X$</span><!-- Has MathJax -->中不被<span>$Y$</span><!-- Has MathJax -->所包含的信息量。从图形上看，这意味着<span>$H(X|Y)$</span><!-- Has MathJax -->是<span>$H(X)$</span><!-- Has MathJax -->的信息条中不与<span>$H(Y)$</span><!-- Has MathJax -->的信息条相重叠的部分。</p>
+                <p>那么现在你就能从下面这个图中直接看出不等式<span>$H(X,Y)\geq H(X) \geq H(X|Y)$</span><!-- Has MathJax --></p>
+                <p><img src="/img/visual-information-theory/Hxy-info-4.png" alt=""></p>
+                <p>另外一个成立的等式是<span>$H(X,Y)=H(Y)+H(X|Y)$</span><!-- Has MathJax -->。这表达的是，<span>$X$</span><!-- Has MathJax -->和<span>$Y$</span><!-- Has MathJax -->所共同包含的信息量等于<span>$Y$</span><!-- Has MathJax -->的信息量加上<span>$X$</span><!-- Has MathJax -->中不被<span>$Y$</span><!-- Has MathJax -->所包含的信息量。</p>
+                <p><img src="/img/visual-information-theory/Hxy-overview-sum.png" alt=""></p>
+                <p>同样，抽象地去理解这个等式有点困难，但是如果我们从信息条堆叠的角度来理解就会容易得多。</p>
+                <p>到现在，我们对<span>$X$</span><!-- Has MathJax -->和<span>$Y$</span><!-- Has MathJax -->的信息量进行了不同角度的理解。我们讨论了单个变量的信息量<span>$H(X)$</span><!-- Has MathJax -->和<span>$H(Y)$</span><!-- Has MathJax -->。也讨论了两个变量联合起来的信息量<span>$H(X,Y)$</span><!-- Has MathJax -->。还讨论了仅存在与单者中的信息量<span>$H(X|Y)$</span><!-- Has MathJax -->和<span>$H(Y|X)$</span><!-- Has MathJax -->。这些角度似乎都与两个变量之间共享的信息量（信息量的交）紧密相关。我们把共享的信息量称为“<strong>互信息（mutual information）</strong>”，记为<span>$I(X,Y)$</span><!-- Has MathJax -->，定义为<sup id="fnref:27"><a href="#fn:27" rel="footnote">27</a></sup>：
+                  <span>$$\begin{aligned}
+                    I(X,Y)=H(X)+H(Y)-H(X,Y)
+                    \end{aligned}$$</span><!-- Has MathJax -->
+                </p>
+                <p>这样的定义之所以行得通，是因为<span>$H(X)+H(Y)$</span><!-- Has MathJax -->包含了两份互信息（<span>$X$</span><!-- Has MathJax -->和<span>$Y$</span><!-- Has MathJax -->中都有一份），而<span>$H(X,Y)$</span><!-- Has MathJax -->只包含了一份。（从上面的条状图中可以看出来。）</p>
+                <p>与互信息相关的另一个概念是<strong>变信息（variation of information）</strong>。变信息是不被两个变量所共享的信息。我们可以把它定义成：
+                  <span>$$\begin{aligned}
+                    V(X,Y)=H(X,Y)-I(X,Y)
+                    \end{aligned}$$</span><!-- Has MathJax -->
+                </p>
+                <p>变信息是令人感兴趣的，因为它给了我们对于两个变量的度量，或者说一种距离的概念。当知道一个变量的值就能确定另一个变量的值时，二者的变信息为零。当两个变量变得越来越独立时，它们的变信息会越来越大。</p>
+                <p>变信息和KL散度（也可以看作是一种距离）有什么关联呢？嗯，KL散度告诉我们的是同一个（组）变量在不同分布间的距离，而变信息告诉我们在同一个联合分布中的两个变量间的距离。KL散度是分布间的，变信息是分布内的。</p>
+                <p>我们可以把上述所有关于信息量的概念放在下面这幅图中：</p>
+                <p><img src="/img/visual-information-theory/Hxy-info.png" alt=""></p>
+                <h1 id="分数比特"><a href="#分数比特" class="headerlink" title="分数比特"></a>分数比特</h1>
+                <p>在信息论中，一个非常不直观的事情是信息量可以是分数<sup id="fnref:28"><a href="#fn:28" rel="footnote">28</a></sup>。这真是太奇怪了。半个比特意味着什么？</p>
+                <p>这里有一个简单的回答：通常来说，我们关心的是消息的平均长度而不是某个消息的具体长度。如果在一半的情况下某人发送一个比特，而在另一半的情况下发送两个比特，那么他平均发送的就是1.5比特。平均数是一个分数这没什么奇怪的。</p>
+                <p>这个回答其实是在回避问题。我们经常可以看见最优码字长度是一个分数。这又意味着什么？</p>
+                <p>具体一点，让我们来考虑这样一个概率分布，事件<span>$a$</span><!-- Has MathJax -->出现的时间占71%，事件<span>$b$</span><!-- Has MathJax -->出现的时间占29%。</p>
+                <p><img src="/img/visual-information-theory/halfbit-ab.png" alt=""></p>
+                <p><span>$a$</span><!-- Has MathJax -->对应的最优码字长度为0.5比特（<span>$\log_{2}(\frac{1}{0.71})\approx0.5$</span><!-- Has MathJax -->），<span>$b$</span><!-- Has MathJax -->的为1.7比特（<span>$\log_{2}(\frac{1}{0.29})\approx 1.7$</span><!-- Has MathJax -->）。嗯，如果我们想要只发送一个码字，那么会出点问题。我们不得不把码字的长度取整，这样使得发送的平均长度变成1比特<sup id="fnref:29"><a href="#fn:29" rel="footnote">29</a></sup>。</p>
+                <p>…但是如果我们打算一次性发送多条信息，那么我们可以做得更好一些。让我们考虑在这个分布下发送两个事件的信息。如果我们每个事件的信息都单独地发送，我们还是得传输两个比特。我们可以做得更好一些吗？</p>
+                <p><img src="/img/visual-information-theory/halfbit-ab2.png" alt=""></p>
+                <p>有一半的时间，我们会发送<span>$aa$</span><!-- Has MathJax -->，发送<span>$ab$</span><!-- Has MathJax -->和<span>$ba$</span><!-- Has MathJax -->的可能性都是21%，而在8%的时间内我们会发送<span>$bb$</span><!-- Has MathJax -->。再一次的，我们得出的理想码字长度还会是分数。</p>
+                <p><img src="/img/visual-information-theory/halfbit-ab-idealcode.png" alt=""></p>
+                <p>如果我们把码字的长度取整，会得到这样的结果：</p>
+                <p><img src="/img/visual-information-theory/halfbit-ab-code.png" alt=""></p>
+                <p>这个编码使得平均信息长度为1.8比特。这比单独发送消息时所需的2比特小一些。另外一种考虑方式是我们现在平均以0.9比特的长度发送每一个事件的信息。如果我们一次性发送更多事件的信息，那么码字的平均长度还会减少。当<span>$n$</span><!-- Has MathJax -->趋向于无穷大时<sup id="fnref:30"><a href="#fn:30" rel="footnote">30</a></sup>，由于对码字长度进行取整所带来的开支就趋于零，并且码字的平均长度也趋向于熵。</p>
+                <p>进一步地，我们注意到<span>$a$</span><!-- Has MathJax -->的理想码字长度是0.5比特，而<span>$aa$</span><!-- Has MathJax -->的理想码字长度是1比特。理想码字长度是可以累加的，即使它是个分数！所以，如果我们一次性发送多个事件的信息，我们可以通过累加的方式得到新的理想码字长度<sup id="fnref:31"><a href="#fn:31" rel="footnote">31</a></sup></p>
+                <p>虽然具体的码字长度必须是个整数，但是信息量是一个分数确实是可能的！</p>
+                <p>（实际上，在不同的领域人们使用不同的特定编码方案。比如我们之前在讨论的实际上是<strong>哈夫曼编码（Huffman coding）</strong>,它无法优雅地处理分数比特的情况——就像我们之前做的那样，得把不同的码字合并成一组来处理，或者使用其它的技巧来接近熵。<strong>算数编码（Arithmetic coding）</strong>就有点不同，它能通过渐进最优的方式来优雅地处理分数比特<sup id="fnref:32"><a href="#fn:32" rel="footnote">32</a></sup>。）</p>
+                <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1>
+                <p>如果我们关心的是使用最少的比特来进行通讯，那么上述的概念无疑是非常有用的。如果我们关心的是数据压缩，信息论阐明了其中的关键问题并且把它很好地抽象了出来。但是如果我们都不关心这些，那么除了好奇心之外，我们还有什么理由去了解信息论吗？</p>
+                <p>信息论的概念其实在很多领域中都会用到，比如机器学习，量子物理，遗传学，热力学，甚至可以用在赌博中。这些领域的从业者可并不是因为关心数据压缩所以要了解信息论，而是因为信息论与他们从事的领域有紧密的联系。用熵可以很好地解释量子纠缠<sup id="fnref:33"><a href="#fn:33" rel="footnote">33</a></sup>。许多在统计力学和热力学中的结论可以通过假设未知的事物的最大熵来推出。一个赌徒的输赢与KL散度有着直接的关联<sup id="fnref:34"><a href="#fn:34" rel="footnote">34</a></sup>，特别是在不停地下注的时候<sup id="fnref:35"><a href="#fn:35" rel="footnote">35</a></sup>。</p>
+                <p>信息论之所以在上述领域中有所应用，是因为它能够对人们想要表达的许多事情进行具体而又准确的描述。它给予我们衡量和表达不确定性的方法，能够告诉人们两组判断有多少不同，还能让我们通过一个问题的答案知道更多关于：概率分布有多分散，两个概率分布间的距离是多少，以及两个变量之间的独立性有多少。有其它相似的概念能够做到这些吗？当然有。但是信息论所提供的概念非常的清晰，具有优美的性质，同时还有良好的理论基础。在某些情况下，它能够精确地表达你所关心的事物，在另一些情况下，它能够让你方便地对真实世界进行抽象。</p>
+                <p>机器学习是我最了解的领域，所以让我们再多谈一点。机器学习里最常见的任务就是对事物进行分类。比如我们想要观察一张图片，然后判断图片的内容是狗还是猫。我们设计的模型可能会说：“有80%的可能性这是一张关于狗的图片，而是猫的概率是20%。”让我们假设正确答案就是狗，那么我们的预测——有80%的可能性是狗——有多好或者多坏呢？如果有一个新的预测结果是那副图有85%的可能性是狗，那么新的预测比原来的预测好多少呢？</p>
+                <p>这是一个很重要的问题，因为如果我们想对模型进行优化，那么就需要有一种概念来衡量模型的好坏。我们如何去优化呢？这取决于我们的模型是用来干什么的：我们是只关心最好的预测结果是否正确？还是只关心对于正确的答案我们有多少的确信度<sup id="fnref:36"><a href="#fn:36" rel="footnote">36</a></sup>？当我们预测错误时局面会有多糟糕呢？很难去回答这个问题。而且通常情况下我们无法知道会有多糟，因为我们不知道模型是否运作地和我们设想的一致<sup id="fnref:37"><a href="#fn:37" rel="footnote">37</a></sup>。结果就是，在某些情况下，交叉熵正好能衡量模型的好坏，而在另外一些情况下则不行。很多时候我们无法确定模型的预测重点<sup id="fnref:38"><a href="#fn:38" rel="footnote">38</a></sup>，即便如此，交叉熵仍然是一个不错的抽象工具<sup id="fnref:39"><a href="#fn:39" rel="footnote">39</a></sup>。</p>
+                <p>从信息的角度来看待事物为我们提供了一种有效的思维框架。有时候它能够很好地处理我们的问题，但有时候可能不行，不过它依然非常有用。这篇文章只是触及了信息论的皮毛——有许多重要的话题，例如错误纠正编码（error-correcting codes），没有被提及——但是我希望它向大家展示了信息论是一个美妙的学科，我们无需对它望而却步。</p>
+                <p>如果你愿意帮助我成为一个更好的写作者，请填一下这个<a target="_blank" rel="noopener" href="https://docs.google.com/forms/d/1zaMvi-yL04GEtS7RnGplZ9TDGO5965GLlDdd50y2zNI/viewform?usp=send_form">反馈表</a>，让我听听你的意见。</p>
+                <h1 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h1>
+                <p>Claude Shannon对于信息论的开创性论文 <a target="_blank" rel="noopener" href="http://worrydream.com/refs/Shannon%20-%20A%20Mathematical%20Theory%20of%20Communication.pdf"><em>A Mathematical Theory of Communication</em></a>是非常易读的。（似乎在早期的信息论文献里有着重复的论证。这是那个时代的风格吗？还是说因为纸多？还是说这是贝尔实验室的文化<sup id="fnref:40"><a href="#fn:40" rel="footnote">40</a></sup>？）</p>
+                <p>Cover和Thomas的著作<em>Elements of Information Theory</em>是信息论领域的标准参考书。我个人认为它是有用的。</p>
+                <h1 id="致谢"><a href="#致谢" class="headerlink" title="致谢"></a>致谢</h1>
+                <p>非常感谢Dan Mané, David Andersen, Emma Pierson和Dario Amodei付出时间为我的文章作出细致的评论。此外我还要谢感Michael Nielsen, Greg Corrado, Yoshua Bengio, Aaron Courville, Nick Beckstead, Jon Shlens, Andrew Dai, Christian Howard, 以及Martin Wattenberg对文章作出的评论。</p>
+                <p>同样感谢我最初参与的两个神经网络系列研讨课，在那之中我对我的想法进行了尝试<sup id="fnref:41"><a href="#fn:41" rel="footnote">41</a></sup>。</p>
+                <p>最后，感谢为文章挑出错误和疏忽的读者们。特别要感谢Connor Zwick, Kai Arulkumaran, Jonathan Heusser, Otavio Good, 以及一位匿名的评论者。</p>
+                <div id="footnotes">
+                  <hr>
+                  <div id="footnotelist">
+                    <ol style="list-style:none; padding-left: 0;">
+                      <li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">1.</span><span style="display: inline-block; vertical-align: top;">原文为：How uncertain am I? How much does knowing the answer to question A tell me about the answer to question B? How similar is one set of beliefs to another?</span><a href="#fnref:1" rev="footnote"> ↩</a></li>
+                      <li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">2.</span><span style="display: inline-block; vertical-align: top;">原文为：I’ve had informal versions of these ideas since I was a young child, but information theory crystallizes them into precise, powerful ideas.</span><a href="#fnref:2" rev="footnote"> ↩</a></li>
+                      <li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">3.</span><span style="display: inline-block; vertical-align: top;">通过这种方式来把天然带有独立性的朴素贝叶斯分类器进行可视化是很有趣的。</span><a href="#fnref:3" rev="footnote"> ↩</a></li>
+                      <li id="fn:4"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">4.</span><span style="display: inline-block; vertical-align: top;">译者注：有人可能会说，其实是可以确定下来的，因为如果第一个码字是“0”，那么接下来的编码字符串“100111”就无法再进行翻译了。但是在解码的时候，这样的做法太低效了，需要去判断很多事情。为了提高解码的效率，一般的做法就是不停地读入字符串，一旦能够确定一个码字，就立刻把它解码。所以我们才需要之后提到的前缀编码。</span><a href="#fnref:4" rev="footnote"> ↩</a></li>
+                      <li id="fn:5"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">5.</span><span style="display: inline-block; vertical-align: top;">原文为：The property we want is that if we see a particular codeword, there shouldn’t be some longer version that is also a codeword.</span><a href="#fnref:5" rev="footnote"> ↩</a></li>
+                      <li id="fn:6"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">6.</span><span style="display: inline-block; vertical-align: top;">译者注：“有限的预算”想表达的意思应该就是说不能随意地使用码字空间。或者说，我们的预算就是1,代表整个码字空间，我们要合理地用掉这个预算，使得平均编码长度尽可能地小。这里应该隐含着一个意思，就是预算一定得用完，即把整个码字空间都消耗掉。</span><a href="#fnref:6" rev="footnote"> ↩</a></li>
+                      <li id="fn:7"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">7.</span><span style="display: inline-block; vertical-align: top;">原文为：You can think of this like having a limited budget to spend on getting short codewords. We pay for one codeword by sacrificing a fraction of possible codewords.</span><a href="#fnref:7" rev="footnote"> ↩</a></li>
+                      <li id="fn:8"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">8.</span><span style="display: inline-block; vertical-align: top;">在这里我处理得不太精确。在图中我用的是以2为底的指数，这并不能得到高度和面积一致的结论，所以我在叙述的时候补充上了自然指数的限制。这样的处理方式使得接下来的证明中省去了很多<span>$\log(2)$</span><!-- Has MathJax -->，同时也让我们的图形变得好看一些。</span><a href="#fnref:8" rev="footnote"> ↩</a></li>
+                      <li id="fn:9"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">9.</span><span style="display: inline-block; vertical-align: top;">译者注：这里说的实际上就是一个等量替换，事实上cost应该就是<span>$cost=2^{-L(x)}$</span><!-- Has MathJax -->曲线上的对应点，但是作者把它和深色部分的面积等同了，这在曲线是<span>$cost=e^{-L(x)}$</span><!-- Has MathJax -->的情形下是成立的，因为深色部分的面积是<span>$\int_{L(x)}^{\infty}e^{-L(x)}=e^{-L(x)}=cost$</span><!-- Has MathJax -->，而当曲线是<span>$cost=2^{-L(x)}$</span><!-- Has MathJax -->时，那样的等量代换就不成立了，因为<span>$\int_{L(x)}^{\infty}2^{-L(x)}=\dfrac{-1}{\ln 2}2^{-L(x)}=\dfrac{-1}{\ln 2}cost$</span><!-- Has MathJax -->。作者说的<span>$\log(2)$</span><!-- Has MathJax -->应该是指<span>$\ln(2)$</span><!-- Has MathJax -->。</span><a href="#fnref:9" rev="footnote"> ↩</a></li>
+                      <li id="fn:10"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">10.</span><span style="display: inline-block; vertical-align: top;">译者注：应该就是指如何合理地使用码字空间。</span><a href="#fnref:10" rev="footnote"> ↩</a></li>
+                      <li id="fn:11"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">11.</span><span style="display: inline-block; vertical-align: top;">原文为：What’s the best way to use our limited budget? How much should we spend on the codeword for each event?</span><a href="#fnref:11" rev="footnote"> ↩</a></li>
+                      <li id="fn:12"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">12.</span><span style="display: inline-block; vertical-align: top;">译者注：这里其实就是在说导数。虽然从图上看确实是那么个意思，但是我们还是来一点数学推算吧。首先，边界的高度在此处都是<span>$p(a)$</span><!-- Has MathJax -->，对于平均信息长度，码字的长度贡献的计算公式是<span>$L_{c}(a)=L(a)\times p(a)$</span><!-- Has MathJax -->，对<span>$L(a)$</span><!-- Has MathJax -->求导，得到<span>$\dfrac{\partial L_{c}(a)}{\partial L(a)}=p(a)$</span><!-- Has MathJax -->。对于码字代价，用自然指数的话，计算公式是<span>$C(a)=e^{-L(a)}$</span><!-- Has MathJax -->，那么对应的导数是<span>$\dfrac{\partial C(a)}{\partial L(a)}=e^{-L(a)}=C(a)$</span><!-- Has MathJax -->，等同于边界的高度。注意，两块区域的边界高度有一点区别，代表对平均信息长度贡献的区域的边界高度始终等于<span>$p(a)$</span><!-- Has MathJax -->，而代表码字代价的区域的边界高度是随着码字的长度而改变的，是<span>$e^{-L(a)}$</span><!-- Has MathJax -->，了解这一点对理解之后的论述是有益的。</span><a href="#fnref:12" rev="footnote"> ↩</a></li>
+                      <li id="fn:13"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">13.</span><span style="display: inline-block; vertical-align: top;">译者注：应该就是变短1比特。</span><a href="#fnref:13" rev="footnote"> ↩</a></li>
+                      <li id="fn:14"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">14.</span><span style="display: inline-block; vertical-align: top;">原文为：if you had a bit more to spend, it would be equally good to invest in making any codeword shorter.</span><a href="#fnref:14" rev="footnote"> ↩</a></li>
+                      <li id="fn:15"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">15.</span><span style="display: inline-block; vertical-align: top;">原文为：Infinitesimally, it doesn’t make sense to change the budget.</span><a href="#fnref:15" rev="footnote"> ↩</a></li>
+                      <li id="fn:16"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">16.</span><span style="display: inline-block; vertical-align: top;">原文为：The average amount of information needed to communicate something has clear implications for compression. But are there other reasons we should care about it? Yes! It describes how uncertain I am and gives a way to quantify information.</span><a href="#fnref:16" rev="footnote"> ↩</a></li>
+                      <li id="fn:17"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">17.</span><span style="display: inline-block; vertical-align: top;">译者注：指的是平均码字长度为6比特，<span>$64\times\log_{2}\left(\frac{1}{64}\right)=6$</span><!-- Has MathJax -->。</span><a href="#fnref:17" rev="footnote"> ↩</a></li>
+                      <li id="fn:18"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">18.</span><span style="display: inline-block; vertical-align: top;">译者注：这句话不知该如何翻译，我想大意就是当稀有的事情发生时，能提供更多的信息量，因为很可能存在其它因素导致了稀有事件的发生。原文为：The more uncertain the outcome, the more I learn, on average, when I find out what happened.</span><a href="#fnref:18" rev="footnote"> ↩</a></li>
+                      <li id="fn:19"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">19.</span><span style="display: inline-block; vertical-align: top;">提醒一下，使用<span>$H_{p}(q)$</span><!-- Has MathJax -->来表示交叉熵不是标准的做法。通常使用的符号是<span>$H(p,q)$</span><!-- Has MathJax -->。但是这个符号有两点不好：第一，联合熵(joint entropy)用的也是这个符号。第二，这个符号让人觉得交叉熵具有对称性。这显得有点荒唐，所以我用<span>$H_{p}(q)$</span><!-- Has MathJax -->来替代。</span><a href="#fnref:19" rev="footnote"> ↩</a></li>
+                      <li id="fn:20"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">20.</span><span style="display: inline-block; vertical-align: top;">译者注：这里不知道该如何翻译，原文 为：This isn’t necessarily as intuitive as one might think.</span><a href="#fnref:20" rev="footnote"> ↩</a></li>
+                      <li id="fn:21"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">21.</span><span style="display: inline-block; vertical-align: top;">译者注：其实也可以很直观地去解释：在<span>$p$</span><!-- Has MathJax -->中，dog是最常用的词，cat是第二常用的词，在<span>$q$</span><!-- Has MathJax -->中，cat是最常用的词，dog是最不常用（第四常用）的词。使用<span>$p$</span><!-- Has MathJax -->的编码来编<span>$q$</span><!-- Has MathJax -->的码字，会出现最常用的词的码字是第二短的，而用<span>$q$</span><!-- Has MathJax -->的编码来编<span>$p$</span><!-- Has MathJax -->的码字，会出现最常用的码字却是最长的！这就导致<span>$H_{q}(p)$</span><!-- Has MathJax -->比<span>$H_{p}(q)$</span><!-- Has MathJax -->大（当然准确地说还要考虑其它词汇，但是在这里考虑最常用的词汇就能说明问题）。</span><a href="#fnref:21" rev="footnote"> ↩</a></li>
+                      <li id="fn:22"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">22.</span><span style="display: inline-block; vertical-align: top;">这也不是表示KL散度的标准符号。</span><a href="#fnref:22" rev="footnote"> ↩</a></li>
+                      <li id="fn:23"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">23.</span><span style="display: inline-block; vertical-align: top;">如果你把KL散度的定义展开，将会得到<span>$D_{q}(p)=\sum_{x}p(x)\log_{2}\left(\dfrac{p(x)}{q(x)}\right)$</span><!-- Has MathJax -->这看起来可能会有点奇怪。我们该如何解释它呢？嗯，<span>$\log_{2}\left(\dfrac{p(x)}{q(x)}\right)$</span><!-- Has MathJax -->代表了使用为<span>$p$</span><!-- Has MathJax -->优化的编码和为<span>$q$</span><!-- Has MathJax -->优化的编码来表示<span>$x$</span><!-- Has MathJax -->时所用比特数的差异。整体上看，表达式就是在计算两种编码得到的码字长度差异的期望</span><a href="#fnref:23" rev="footnote"> ↩</a></li>
+                      <li id="fn:24"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">24.</span><span style="display: inline-block; vertical-align: top;">原文为：It seems like I need to send however much information I need to communicate the clothes I’m wearing.</span><a href="#fnref:24" rev="footnote"> ↩</a></li>
+                      <li id="fn:25"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">25.</span><span style="display: inline-block; vertical-align: top;">原文为：In both cases, I don’t need to send very much information on average, because the weather gives me a good guess at what the right answer will be.</span><a href="#fnref:25" rev="footnote"> ↩</a></li>
+                      <li id="fn:26"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">26.</span><span style="display: inline-block; vertical-align: top;">Raymond W. Yeung 在他的论文<em>A New Outlook on Shannon’s Information Measures</em>中阐述了这样的做法为信息论的集合解释建立了基础。</span><a href="#fnref:26" rev="footnote"> ↩</a></li>
+                      <li id="fn:27"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">27.</span><span style="display: inline-block; vertical-align: top;">如果你把互信息的定义展开，将会得到<span>$I(X,Y)=\sum_{x,y}p(x,y)\log_{2}\left(\dfrac{p(x,y)}{p(x)p(y)}\right)$</span><!-- Has MathJax -->这看起来和KL散度非常像！这是为什么呢？嗯，它确实就是KL散度。实际上，它是<span>$P(X,Y)$</span><!-- Has MathJax -->和其简单近似<span>$P(X)P(Y)$</span><!-- Has MathJax -->的KL散度。它表达了相比于假设<span>$X$</span><!-- Has MathJax -->和<span>$Y$</span><!-- Has MathJax -->是独立的，当确切地知道两者的关系时，对它们进行表达所能节约的比特数。一个好玩的展现方式是，把等式中的真实分布（<span>$p(x,y)$</span><!-- Has MathJax -->）和近似分布（<span>$p(x)p(y)$</span><!-- Has MathJax -->）用图片来替代：<img src="/img/visual-information-theory/mutual-visual-eq.png" width=160px></span><a href="#fnref:27" rev="footnote"> ↩</a></li>
+                      <li id="fn:28"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">28.</span><span style="display: inline-block; vertical-align: top;">原文为：A very unintuitive thing about information theory is that we can have fractional numbers of bits.</span><a href="#fnref:28" rev="footnote"> ↩</a></li>
+                      <li id="fn:29"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">29.</span><span style="display: inline-block; vertical-align: top;">译者注：把<span>$a$</span><!-- Has MathJax -->和<span>$b$</span><!-- Has MathJax -->的码字长度都变成1比特。在这里，取整不是简单地四舍五入或者只朝同一个方向取整，要结合编码的情况来考虑。</span><a href="#fnref:29" rev="footnote"> ↩</a></li>
+                      <li id="fn:30"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">30.</span><span style="display: inline-block; vertical-align: top;">译者注：即发送一次信息中包含的事件数趋向于无穷多。</span><a href="#fnref:30" rev="footnote"> ↩</a></li>
+                      <li id="fn:31"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">31.</span><span style="display: inline-block; vertical-align: top;">译者注：我猜想作者想要表达的意思就是，如果<span>$a$</span><!-- Has MathJax -->的理想码字长度是0.5，<span>$b$</span><!-- Has MathJax -->的理想码字长度是1.7，那么<span>$ab$</span><!-- Has MathJax -->的理想码字长度就是0.5+1.7=2.2。可能需要一点具体的证明，不过从直觉上看，乘法在对数的作用下会变成加法，那样的做法应该是行得通的。</span><a href="#fnref:31" rev="footnote"> ↩</a></li>
+                      <li id="fn:32"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">32.</span><span style="display: inline-block; vertical-align: top;">原文为：Arithmetic coding is a bit different, but elegantly handles fractional bits to be asymptotically optimal.</span><a href="#fnref:32" rev="footnote"> ↩</a></li>
+                      <li id="fn:33"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">33.</span><span style="display: inline-block; vertical-align: top;">作为一个统计物理的门外汉，我会很谨慎地概述一下在我理解中它与信息论的联系。在Shannon提出信息论之后，许多人意识到热力学和信息论中的一些公式有那么点相似。E.T. Jaynes发现了一个非常深刻而又严谨的联系。假设有一个热力学系统，它具有某些度量值，例如压力和温度。你会如何假设该系统处于某个状态的概率呢？Jaynes认为，我们应该假设度量值的概率分布具有最大的熵。（注意这里用到的“最大熵原理（principle of maximum entropy）”不仅仅存在于物理学中，它是常见的。）也就是说，我们所假设的概率分布要具有最多的未知信息。许多结论都能从这个视角得到。（参考Jaynes论文的前几节（<a target="_blank" rel="noopener" href="http://bayes.wustl.edu/etj/articles/theory.1.pdf">第一部分</a>，<a target="_blank" rel="noopener" href="http://bayes.wustl.edu/etj/articles/theory.2.pdf">第二部分</a>），这篇论文浅显易懂让我印象深刻。）如果你对这个联系感兴趣，但是又不想去读论文，那么可以去看Cover和Thomas的书，其中有一个章节通过马尔可夫链（Markov Chains）推导出了热力学第二定律的统计学版本！</span><a href="#fnref:33" rev="footnote"> ↩</a></li>
+                      <li id="fn:34"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">34.</span><span style="display: inline-block; vertical-align: top;">原文为：A gambler’s wins or losses are directly connected to KL divergence, in particular iterated setups.</span><a href="#fnref:34" rev="footnote"> ↩</a></li>
+                      <li id="fn:35"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">35.</span><span style="display: inline-block; vertical-align: top;">信息论和赌博的联系第一次被提及，是在John Kelly的论文<a target="_blank" rel="noopener" href="http://www.princeton.edu/~wbialek/rome/refs/kelly_56.pdf"><em>A New Interpretation of Information Rate</em></a>之中。虽然它需要一些在本文中未涉及的概念，但是仍不失为一篇非常易读的文章。Kelly进行这项研究的动机很有趣。他注意到熵被用于许多与信息编码无关的代价函数中，于是就想去探究该种用法的合理性。在写作本文时，我也遇到了同样的困惑，因此我非常感激Kelly的研究所提供的视角。然而，他的说法有点不让人信服：Kelly只是在赌徒会不停地把所有的资本作为赌注的情况下引出熵，在其它的下注策略下是得不到熵的。在Cover和Thomas的权威著作<em>Elements of Information Theory</em>中，有对Kelly观点的精彩论述。</span><a href="#fnref:35" rev="footnote"> ↩</a></li>
+                      <li id="fn:36"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">36.</span><span style="display: inline-block; vertical-align: top;">原文为：Do we only care about whether the top guess was right, or do we care about how confident we are in the correct answer?</span><a href="#fnref:36" rev="footnote"> ↩</a></li>
+                      <li id="fn:37"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">37.</span><span style="display: inline-block; vertical-align: top;">原文为：There isn’t one right answer to this. And often it isn’t possible to know the right answer, because we don’t know how the model will be used in a precise enough way to formalize what we ultimately care about.</span><a href="#fnref:37" rev="footnote"> ↩</a></li>
+                      <li id="fn:38"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">38.</span><span style="display: inline-block; vertical-align: top;">原文为：Much more often we don’t know exactly what we care about and cross-entropy is a really nice proxy.</span><a href="#fnref:38" rev="footnote"> ↩</a></li>
+                      <li id="fn:39"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">39.</span><span style="display: inline-block; vertical-align: top;">虽然无法解决问题，但是我在这里还是忍不住想提一下KL散度。在Cover和Thomas的书中用到了一个Stein引理（Stein’s Lemma），不过这和我们通常说的Stein引理不是同一件事。概括地说，这个Stein引理讲的是：假设你有了一些观测数据，这些数据来自某两个概率分布中的一个。你能多确信是哪个概率分布产生了这些数据呢？一般而言，随着你获得的数据越来越多，你对于判断的确信程度是呈指数上升的。比如说，平均而言，每获得一个新数据，你对于自己判断的正确性的确信程度就会上升1.5倍。确信度的上升速度取决于两个分布的差异程度。如果两个分布差异很大，你可以很快地把答案确定下来。但是如果它们很相似，那么你可能需要采集大量数据之后才能得到一个稍微可靠的判断。Stein引理说的就是，粗略地看，置信度的乘数因子是由KL散度控制的。（这与假正例（false-positives）和假负例（false-negatives）之间的权衡有点微妙的联系（此处原文为：There’s some subtlety about the trade off between false-positives and false-negatives.）。）这看起来是一个让我们重视KL散度的好理由！</span><a href="#fnref:39" rev="footnote"> ↩</a></li>
+                      <li id="fn:40"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">40.</span><span style="display: inline-block; vertical-align: top;">原文为：This seems to be a recurring pattern in early information theory papers. Was it the era? A lack of page limits? A culture emanating from Bell Labs?</span><a href="#fnref:40" rev="footnote"> ↩</a></li>
+                      <li id="fn:41"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">41.</span><span style="display: inline-block; vertical-align: top;">原文为：Thanks also to my first two neural network seminar series for acting as guinea pigs for these ideas.</span><a href="#fnref:41" rev="footnote"> ↩</a></li>
+                    </ol>
+                  </div>
+                </div>
+                <script>
+                  window.disqusProxy = {
+                    shortname: 'yugnaynehc',
+                    username: 'Yugnaynehc',
+                    server: '172.247.32.111',
+                    port: 5509,
+                    adminAvatar: '/avatars/admin-avatar.jpg',
+                    identifier: 'en/2017/01/02/visual-information-theory/',
+                  };
+                  window.disqus_config = function() {
+                    this.page.url = window.location.href;
+                    this.page.identifier = window.disqusProxy.identifier;
+                  };
+                </script>
+
+                <span class="post_counter" id="busuanzi_container_page_pv">View: <span id="busuanzi_value_page_pv"></span> times</span>
+                <div class="declaration">
+                  <ul>
+                    <li><span>Title: </span><a href="/en/2017/01/02/visual-information-theory/">[译]直观理解信息论</a></li>
+                    <li><span>Author: </span><a href="/" title="Visit undefined&#39;s blog">undefined</a></li>
+                    <li><span>Post: </span>January 2nd 2017, 3:20 pm</li>
+                    <li><span>Update: </span>February 15th 2023, 11:25 pm</li>
+                    <li><span>Count: </span><span class="page-count">This article has 14,740 words</span></li>
+                    <li><span>Link: </span><a href="/en/2017/01/02/visual-information-theory/" title="[译]直观理解信息论">https://yugnaynehc.github.io/2017/01/02/visual-information-theory/</a></li>
+                    <li><span>License: </span><i class="fa fa-creative-commons"></i> <a rel="license noopener" target="_blank" href="https://creativecommons.org/licenses/by-nc-nd/3.0/deed" title="Attribution-NonCommercial-NoDerivs 3.0 Unported (CC BY-NC-ND 3.0)">Attribution-NonCommercial-NoDerivs 3.0 Unported</a></li>
+                  </ul>
+                  <p><span>Please keep the above statements when repost this article.</span></p>
+                </div>
+
+
+
+              </div>
+              <footer class="article-footer">
+                <a data-url="https://yugnaynehc.github.io/en/2017/01/02/visual-information-theory/" data-id="cle5um616000g2ax2eve54j62" class="article-share-link">Share</a>
+
+
+                <a href="/en/2017/01/02/visual-information-theory/#disqus_thread" class="article-comment-link">Comments</a>
+
+
+                <ul class="article-tag-list" itemprop="keywords">
+                  <li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/computer-science/" rel="tag">Computer Science</a></li>
+                  <li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/machine-learning/" rel="tag">Machine Learning</a></li>
+                  <li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/translation/" rel="tag">Translation</a></li>
+                </ul>
+
+              </footer>
+            </div>
+
+
+            <nav id="article-nav">
+
+              <a href="/en/2017/01/03/understanding-lstm-networks/" id="article-nav-newer" class="article-nav-link-wrap">
+                <strong class="article-nav-caption">Newer</strong>
+                <div class="article-nav-title">
+
+                  [译]理解 LSTM 网络
+
+                </div>
+              </a>
+
+
+              <a href="/en/2016/08/23/archlinux/" id="article-nav-older" class="article-nav-link-wrap">
+                <strong class="article-nav-caption">Older</strong>
+                <div class="article-nav-title">Archlinux安装笔记</div>
+              </a>
+
+            </nav>
+
+
+          </article>
+
+          <div class="comments">
+
+
+            <section id="comments">
+              
+      <script src="//cdn.bootcss.com/react/16.0.0/umd/react.production.min.js"></script>
+      <script src="//cdn.bootcss.com/react-dom/16.0.0/umd/react-dom.production.min.js"></script>
+      <script src="//cdn.bootcss.com/fetch/2.0.3/fetch.min.js"></script>
+      <script src="//cdn.jsdelivr.net/npm/blockies-identicon@0.1.0/blockies.min.js"></script>
+      <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+      <div id="disqus_proxy_thread"><script src="/scripts/hexo-disqus-proxy-primary.js" async></script>
+                <noscript>
+                  Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+                </noscript>
+                <div>
+            </section>
+
+          </div>
+
+        </section>
+
+      </div>
+      <footer id="footer">
+
+        <div class="outer">
+          <div id="footer-left">
+            &copy; 2014 - 2023 Yangyu Chen&nbsp;|&nbsp;
+            Theme by <a href="https://github.com/giscafer/hexo-theme-cafe/" target="_blank">Cafe</a>
+          </div>
+          <div id="footer-right">
+            <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <span id="busuanzi_container_site_pv">This site was visited <span id="busuanzi_value_site_pv"></span> times</span>
+            <span id="busuanzi_container_site_uv">by <span id="busuanzi_value_site_uv"></span> visitor</span>
+            <div class="clearfix"></div>
+            <div id="footer-right">
+              Contact&nbsp;|&nbsp;yugnaynehc@gmail.com
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      <script src="/jquery/jquery.min.js"></script>
+
+
+    </div>
+    <nav id="mobile-nav">
+
+      <a href="/en/" class="mobile-nav-link">Home</a>
+
+      <a href="/en/archives/" class="mobile-nav-link">Archive</a>
+
+      <a href="/en/about/" class="mobile-nav-link">About</a>
+
+    </nav>
+    <img class="back-to-top-btn" src="/images/fly-to-top.png" />
+    <script>
+      // Elevator script included on the page, already.
+      window.onload = function() {
+        var elevator = new Elevator({
+          selector: '.back-to-top-btn',
+          element: document.querySelector('.back-to-top-btn'),
+          duration: 1000 // milliseconds
+        });
+      }
+    </script>
+
+
+    <script>
+      var disqus_shortname = 'yugnaynehc';
+
+      var disqus_url = 'https://yugnaynehc.github.io/2017/01/02/visual-information-theory/';
+
+      (function() {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js'; <
+        !--用https加载， 防止disqus被墙-- >
+        <
+        !--如果加载的是count.js 会把article - comment - link的内容变成评论的数量-- >
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+
+
+
+    <script src="/js/is.js"></script>
+
+
+
+
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+    <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+    <script src="/js/script.js"></script>
+
+
+    <script src="/js/elevator.js"></script>
+
+  </div><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({{ JSON.stringify(config) }});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="{{ src }}">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+</body>
+
+</html>

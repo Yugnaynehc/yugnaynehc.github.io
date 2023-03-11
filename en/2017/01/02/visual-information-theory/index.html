@@ -4,73 +4,73 @@
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
 
-  <title>[译]直观理解信息论 | Meta</title>
+  <title>直观理解信息论 | Meta</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="作者：Christopher Olah &amp;nbsp; 翻译：Yangyu Chen 原文：Visual Information Theory   我喜欢通过不同方式思考事物所带来的感觉，特别是当某些模糊的想法被形式化为具体的概念时。信息论便是一个极好的例子。 信息论为我们提供了精确的语言来描述许多事物。我对事物有多少的不确信？知道问题A的答案能够为问题B提供多少信息？两组观点之间有多么相似1？当">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="[译]直观理解信息论">
-  <meta property="og:url" content="https://yugnaynehc.github.io/en/2017/01/02/visual-information-theory/index.html">
+  <meta property="og:title" content="直观理解信息论">
+  <meta property="og:url" content="https://chenyangyu.top/en/2017/01/02/visual-information-theory/index.html">
   <meta property="og:site_name" content="Meta">
   <meta property="og:description" content="作者：Christopher Olah &amp;nbsp; 翻译：Yangyu Chen 原文：Visual Information Theory   我喜欢通过不同方式思考事物所带来的感觉，特别是当某些模糊的想法被形式化为具体的概念时。信息论便是一个极好的例子。 信息论为我们提供了精确的语言来描述许多事物。我对事物有多少的不确信？知道问题A的答案能够为问题B提供多少信息？两组观点之间有多么相似1？当">
   <meta property="og:locale" content="en_US">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/prob-1D-rain.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/prob-1D-coat.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/prob-2D-independent-rain.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/prob-2D-dependant-rain-squish.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/prob-2D-factored-rain-arrow.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/prob-2D-factored1-clothing-B.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/simpson-margin.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/simpson-participants.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/simpson-separated-note.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/message.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/code-2bit.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/encode-2bit.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/DogWordFreq.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/OldCode.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/code.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/NewCode.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/EntropyOptimalLengthExample.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/CodeSpace.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/encode.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/CodeSpaceUsed.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/code-costonly.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/code-lengthcontrib.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/code-cost.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/code-cost-longshort.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/code-auction-balanced-noderivs.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/code-derivs.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/code-auction-balanced.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/code-auction-eps.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/entropy-def-notitle.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/DogCatWordFreq.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/CrossEntropyDef.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/CrossEntropyCompare.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/CrossEntropyPQ.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/CrossEntropyQP.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/prob-2D-factored1-detail.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/prob-2D-factored1-flat.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/Hxy-flat.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/Hxy-3D.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/HxCy-sep.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/HxCy.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/Hxy-info-1.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/Hxy-overview.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/Hxy-info-4.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/Hxy-overview-sum.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/Hxy-info.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/halfbit-ab.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/halfbit-ab2.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/halfbit-ab-idealcode.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/halfbit-ab-code.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/visual-information-theory/mutual-visual-eq.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/prob-1D-rain.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/prob-1D-coat.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/prob-2D-independent-rain.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/prob-2D-dependant-rain-squish.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/prob-2D-factored-rain-arrow.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/prob-2D-factored1-clothing-B.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/simpson-margin.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/simpson-participants.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/simpson-separated-note.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/message.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/code-2bit.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/encode-2bit.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/DogWordFreq.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/OldCode.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/code.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/NewCode.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/EntropyOptimalLengthExample.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/CodeSpace.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/encode.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/CodeSpaceUsed.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/code-costonly.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/code-lengthcontrib.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/code-cost.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/code-cost-longshort.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/code-auction-balanced-noderivs.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/code-derivs.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/code-auction-balanced.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/code-auction-eps.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/entropy-def-notitle.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/DogCatWordFreq.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/CrossEntropyDef.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/CrossEntropyCompare.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/CrossEntropyPQ.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/CrossEntropyQP.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/prob-2D-factored1-detail.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/prob-2D-factored1-flat.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/Hxy-flat.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/Hxy-3D.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/HxCy-sep.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/HxCy.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/Hxy-info-1.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/Hxy-overview.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/Hxy-info-4.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/Hxy-overview-sum.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/Hxy-info.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/halfbit-ab.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/halfbit-ab2.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/halfbit-ab-idealcode.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/halfbit-ab-code.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/visual-information-theory/mutual-visual-eq.png">
   <meta property="article:published_time" content="2017-01-02T07:20:22.000Z">
-  <meta property="article:modified_time" content="2023-02-15T15:25:22.819Z">
+  <meta property="article:modified_time" content="2023-03-11T13:39:00.127Z">
   <meta property="article:author" content="Yangyu Chen">
   <meta property="article:tag" content="Computer Science">
   <meta property="article:tag" content="Machine Learning">
   <meta property="article:tag" content="Translation">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:image" content="https://yugnaynehc.github.io/img/visual-information-theory/prob-1D-rain.png">
+  <meta name="twitter:image" content="https://chenyangyu.top/img/visual-information-theory/prob-1D-rain.png">
 
   <link rel="alternate" href="/atom.xml" title="Meta" type="application/atom+xml">
 
@@ -122,7 +122,7 @@
               <a id="nav-search-btn" class="nav-icon" title="Search"></a>
             </nav>
             <div id="search-form-wrap">
-              <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://yugnaynehc.github.io"></form>
+              <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chenyangyu.top"></form>
             </div>
             <nav id="main-nav">
               <a id="main-nav-toggle" class="nav-icon"></a>
@@ -166,7 +166,7 @@
 
 
                 <h1 class="article-title" itemprop="name">
-                  [译]直观理解信息论
+                  直观理解信息论
                 </h1>
 
 
@@ -518,12 +518,12 @@
                 <span class="post_counter" id="busuanzi_container_page_pv">View: <span id="busuanzi_value_page_pv"></span> times</span>
                 <div class="declaration">
                   <ul>
-                    <li><span>Title: </span><a href="/en/2017/01/02/visual-information-theory/">[译]直观理解信息论</a></li>
+                    <li><span>Title: </span><a href="/en/2017/01/02/visual-information-theory/">直观理解信息论</a></li>
                     <li><span>Author: </span><a href="/" title="Visit undefined&#39;s blog">undefined</a></li>
                     <li><span>Post: </span>January 2nd 2017, 3:20 pm</li>
-                    <li><span>Update: </span>February 15th 2023, 11:25 pm</li>
+                    <li><span>Update: </span>March 11th 2023, 9:39 pm</li>
                     <li><span>Count: </span><span class="page-count">This article has 14,740 words</span></li>
-                    <li><span>Link: </span><a href="/en/2017/01/02/visual-information-theory/" title="[译]直观理解信息论">https://yugnaynehc.github.io/2017/01/02/visual-information-theory/</a></li>
+                    <li><span>Link: </span><a href="/en/2017/01/02/visual-information-theory/" title="直观理解信息论">https://chenyangyu.top/2017/01/02/visual-information-theory/</a></li>
                     <li><span>License: </span><i class="fa fa-creative-commons"></i> <a rel="license noopener" target="_blank" href="https://creativecommons.org/licenses/by-nc-nd/3.0/deed" title="Attribution-NonCommercial-NoDerivs 3.0 Unported (CC BY-NC-ND 3.0)">Attribution-NonCommercial-NoDerivs 3.0 Unported</a></li>
                   </ul>
                   <p><span>Please keep the above statements when repost this article.</span></p>
@@ -533,7 +533,7 @@
 
               </div>
               <footer class="article-footer">
-                <a data-url="https://yugnaynehc.github.io/en/2017/01/02/visual-information-theory/" data-id="cle5um616000g2ax2eve54j62" class="article-share-link">Share</a>
+                <a data-url="https://chenyangyu.top/en/2017/01/02/visual-information-theory/" data-id="cle5um616000g2ax2eve54j62" class="article-share-link">Share</a>
 
 
 
@@ -553,7 +553,7 @@
                 <strong class="article-nav-caption">Newer</strong>
                 <div class="article-nav-title">
 
-                  [译]理解 LSTM 网络
+                  理解 LSTM 网络
 
                 </div>
               </a>

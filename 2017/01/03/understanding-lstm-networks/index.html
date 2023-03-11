@@ -4,38 +4,38 @@
 <head>
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
 
-  <title>[译]理解 LSTM 网络 | Meta</title>
+  <title>理解 LSTM 网络 | Meta</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="作者：Christopher Olah &amp;nbsp; 翻译：Yangyu Chen 原文：Understanding LSTM Networks   循环神经网络人类在思考问题的时候并不总是从头开始的。当你在读这篇短文时，你对当前读到的每个字的理解，是建立在对之前内容理解的基础上的。你并不是把所有的东西扔掉然后从头开始思考。换句话说，你的思考具有延续性。 传统的神经网络无法模拟人的这一行为，这似">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="[译]理解 LSTM 网络">
-  <meta property="og:url" content="https://yugnaynehc.github.io/2017/01/03/understanding-lstm-networks/index.html">
+  <meta property="og:title" content="理解 LSTM 网络">
+  <meta property="og:url" content="https://chenyangyu.top/2017/01/03/understanding-lstm-networks/index.html">
   <meta property="og:site_name" content="Meta">
   <meta property="og:description" content="作者：Christopher Olah &amp;nbsp; 翻译：Yangyu Chen 原文：Understanding LSTM Networks   循环神经网络人类在思考问题的时候并不总是从头开始的。当你在读这篇短文时，你对当前读到的每个字的理解，是建立在对之前内容理解的基础上的。你并不是把所有的东西扔掉然后从头开始思考。换句话说，你的思考具有延续性。 传统的神经网络无法模拟人的这一行为，这似">
   <meta property="og:locale" content="zh_CN">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/RNN-rolled.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/RNN-unrolled.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/RNN-shorttermdepdencies.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/RNN-longtermdependencies.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM3-SimpleRNN.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM3-chain.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM2-notation.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM3-C-line.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM3-gate.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM3-focus-f.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM3-focus-i.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM3-focus-C.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM3-focus-o.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM3-var-peepholes.png">
-  <meta property="og:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/LSTM3-var-GRU.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/understanding-lstm-networks/RNN-rolled.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/understanding-lstm-networks/RNN-unrolled.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/understanding-lstm-networks/RNN-shorttermdepdencies.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/understanding-lstm-networks/RNN-longtermdependencies.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/understanding-lstm-networks/LSTM3-SimpleRNN.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/understanding-lstm-networks/LSTM3-chain.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/understanding-lstm-networks/LSTM2-notation.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/understanding-lstm-networks/LSTM3-C-line.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/understanding-lstm-networks/LSTM3-gate.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/understanding-lstm-networks/LSTM3-focus-f.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/understanding-lstm-networks/LSTM3-focus-i.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/understanding-lstm-networks/LSTM3-focus-C.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/understanding-lstm-networks/LSTM3-focus-o.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/understanding-lstm-networks/LSTM3-var-peepholes.png">
+  <meta property="og:image" content="https://chenyangyu.top/img/understanding-lstm-networks/LSTM3-var-GRU.png">
   <meta property="article:published_time" content="2017-01-03T07:07:13.000Z">
-  <meta property="article:modified_time" content="2023-02-15T15:25:22.819Z">
+  <meta property="article:modified_time" content="2023-03-11T13:38:50.664Z">
   <meta property="article:author" content="Yangyu Chen">
   <meta property="article:tag" content="Computer Science">
   <meta property="article:tag" content="Machine Learning">
   <meta property="article:tag" content="Translation">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:image" content="https://yugnaynehc.github.io/img/understanding-lstm-networks/RNN-rolled.png">
+  <meta name="twitter:image" content="https://chenyangyu.top/img/understanding-lstm-networks/RNN-rolled.png">
 
   <link rel="alternate" href="/atom.xml" title="Meta" type="application/atom+xml">
 
@@ -87,7 +87,7 @@
               <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
             </nav>
             <div id="search-form-wrap">
-              <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://yugnaynehc.github.io"></form>
+              <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chenyangyu.top"></form>
             </div>
             <nav id="main-nav">
               <a id="main-nav-toggle" class="nav-icon"></a>
@@ -131,7 +131,7 @@
 
 
                 <h1 class="article-title" itemprop="name">
-                  [译]理解 LSTM 网络
+                  理解 LSTM 网络
                 </h1>
 
 
@@ -253,12 +253,12 @@
                 <span class="post_counter" id="busuanzi_container_page_pv">本文总阅读量: <span id="busuanzi_value_page_pv"></span>次</span>
                 <div class="declaration">
                   <ul>
-                    <li><span>文章标题: </span><a href="/2017/01/03/understanding-lstm-networks/">[译]理解 LSTM 网络</a></li>
+                    <li><span>文章标题: </span><a href="/2017/01/03/understanding-lstm-networks/">理解 LSTM 网络</a></li>
                     <li><span>文章作者: </span><a href="/" title="访问undefined的个人博客">undefined</a></li>
                     <li><span>发布时间: </span>一月 3日 2017, 3:07 下午</li>
-                    <li><span>最后更新: </span>二月 15日 2023, 11:25 晚上</li>
+                    <li><span>最后更新: </span>三月 11日 2023, 9:38 晚上</li>
                     <li><span>本文字数: </span><span class="page-count">本文一共有3,867字</span></li>
-                    <li><span>原始链接: </span><a href="/2017/01/03/understanding-lstm-networks/" title="[译]理解 LSTM 网络">https://yugnaynehc.github.io/2017/01/03/understanding-lstm-networks/</a></li>
+                    <li><span>原始链接: </span><a href="/2017/01/03/understanding-lstm-networks/" title="理解 LSTM 网络">https://chenyangyu.top/2017/01/03/understanding-lstm-networks/</a></li>
                     <li><span>许可协议: </span><i class="fa fa-creative-commons"></i> <a rel="license noopener" target="_blank" href="https://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh" title="Attribution-NonCommercial-NoDerivs 3.0 Unported (CC BY-NC-ND 3.0)">自由转载-非商用-非衍生-保持署名（创意共享3.0许可证）</a></li>
                   </ul>
                   <p><span>转载请保留以上信息。</span></p>
@@ -268,7 +268,7 @@
 
               </div>
               <footer class="article-footer">
-                <a data-url="https://yugnaynehc.github.io/2017/01/03/understanding-lstm-networks/" data-id="cle5um614000c2ax24ib3fb3l" class="article-share-link">分享</a>
+                <a data-url="https://chenyangyu.top/2017/01/03/understanding-lstm-networks/" data-id="cle5um614000c2ax24ib3fb3l" class="article-share-link">分享</a>
 
 
 
@@ -287,7 +287,7 @@
 
               <a href="/2017/01/02/visual-information-theory/" id="article-nav-older" class="article-nav-link-wrap">
                 <strong class="article-nav-caption">下一篇</strong>
-                <div class="article-nav-title">[译]直观理解信息论</div>
+                <div class="article-nav-title">直观理解信息论</div>
               </a>
 
             </nav>
